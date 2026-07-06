@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>My Telegram Profile</title>
+    <!-- Tailwind CSS for utility styles -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Official Telegram Web App SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        /* CSS Variable mapping to match Telegram's exact UI Theme */
+        :root {
+            --bg-color: var(--tg-theme-bg-color, #18222d);
+            --text-color: var(--tg-theme-text-color, #f5f5f5);
+            --hint-color: var(--tg-theme-hint-color, #b1c3d4);
+            --link-color: var(--tg-theme-link-color, #4facfe);
+            --button-color: var(--tg-theme-button-color, #2481cc);
+            --button-text-color: var(--tg-theme-button-text-color, #ffffff);
+            --secondary-bg-color: var(--tg-theme-secondary-bg-color, #131b24);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        /* Custom color classes derived from Telegram's active theme */
+        .tg-hint { color: var(--hint-color); }
+        .tg-link { color: var(--link-color); }
+        .tg-btn { 
+            background-color: var(--button-color); 
+            color: var(--button-text-color);
+        }
+        .tg-secondary-bg { background-color: var(--secondary-bg-color); }
+        
+        /* Subtle glow for profile pictures */
+        .profile-glow {
+            box-shadow: 0 10px 30px -10px var(--button-color);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between px-6 pb-6 pt-12">
+
+    <!-- Top Status Indicator -->
+    <div class="w-full flex items-center justify-between pb-4 border-b border-white/5">
+        <div class="flex items-center space-x-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span class="text-xs uppercase tracking-widest font-semibold opacity-60">Verified Session</span>
+        </div>
+        <div class="text-xs opacity-60 flex items-center gap-1">
+            <i data-lucide="shield" class="w-3.5 h-3.5 tg-link"></i> Secure App
+        </div>
+    </div>
+
+    <!-- Main Profile Card Container -->
+    <main class="flex-1 flex flex-col items-center justify-center space-y-8">
+        
+        <!-- Profile Picture Container -->
+        <div class="relative group">
+            <!-- Animated decorative outer ring -->
+            <div class="absolute -inset-1 bg-gradient-to-tr from-[var(--button-color)] to-purple-500 rounded-full blur opacity-40"></div>
+            
+            <div class="relative">
+                <img 
+                    id="user-avatar" 
+                    src="" 
+                    alt="Profile" 
+                    class="w-36 h-36 rounded-full object-cover border-4 border-[var(--bg-color)] profile-glow mx-auto transition-transform duration-300 transform active:scale-95"
+                />
+                
+                <!-- Premium star badge if profile loads -->
+                <div class="absolute bottom-1 right-2 bg-[var(--button-color)] p-1.5 rounded-full border-2 border-[var(--bg-color)] text-[var(--button-text-color)]">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Name and Username details -->
+        <div class="text-center space-y-2">
+            <h1 class="text-3xl font-extrabold tracking-tight">
+                <span id="first-name">Telegram</span> 
+                <span id="last-name" class="opacity-60">User</span>
+            </h1>
+            <p id="username" class="tg-link font-semibold text-lg">@username</p>
+            
+            <!-- Quick copy ID badge -->
+            <div class="inline-flex items-center space-x-2 tg-secondary-bg px-4 py-1.5 rounded-full border border-white/5 mt-2 active:opacity-70 transition-opacity" onclick="copyUserId()">
+                <span id="user-id" class="text-xs font-mono opacity-80">ID: ---------</span>
+                <i data-lucide="copy" class="w-3.5 h-3.5 tg-hint"></i>
+            </div>
+        </div>
+
+        <!-- User platform stats -->
+        <div class="w-full max-w-xs grid grid-cols-2 gap-3">
+            <div class="tg-secondary-bg border border-white/5 rounded-2xl p-4 text-center">
+                <i data-lucide="globe" class="w-5 h-5 mx-auto mb-1.5 tg-link"></i>
+                <span class="text-[10px] tg-hint uppercase tracking-wider block">Language</span>
+                <span id="user-lang" class="font-bold text-sm">EN</span>
+            </div>
+            <div class="tg-secondary-bg border border-white/5 rounded-2xl p-4 text-center">
+                <i data-lucide="smartphone" class="w-5 h-5 mx-auto mb-1.5 tg-link"></i>
+                <span class="text-[10px] tg-hint uppercase tracking-wider block">Platform</span>
+                <span id="user-platform" class="font-bold text-sm">Mobile</span>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Custom Native Notification Banner (Replacement for alert) -->
+    <div id="custom-toast" class="opacity-0 translate-y-4 fixed bottom-6 left-6 right-6 tg-secondary-bg border border-white/10 p-3 rounded-xl shadow-2xl flex items-center space-x-3 transition-all duration-300 pointer-events-none z-50">
+        <div class="p-1.5 bg-[var(--button-color)] rounded-lg text-[var(--button-text-color)]">
+            <i data-lucide="check" class="w-4 h-4"></i>
+        </div>
+        <span id="toast-message" class="text-sm font-medium">Copied successfully</span>
+    </div>
+
+    <!-- Spacer representing the bottom area since 'Close Session' was removed -->
+    <div class="h-4"></div>
+
+    <!-- Logic Engine -->
+    <script>
+        // Init icon pack
+        lucide.createIcons();
+
+        // Safe fetch of Telegram WebApp instance
+        const tg = window.Telegram ? window.Telegram.WebApp : null;
+
+        // Display custom toast inside the app frame
+        function showNotification(message) {
+            const toast = document.getElementById('custom-toast');
+            const text = document.getElementById('toast-message');
+            text.textContent = message;
+            
+            toast.classList.remove('opacity-0', 'translate-y-4');
+            toast.classList.add('opacity-100', 'translate-y-0');
+            
+            setTimeout(() => {
+                toast.classList.remove('opacity-100', 'translate-y-0');
+                toast.classList.add('opacity-0', 'translate-y-4');
+            }, 2000);
+        }
+
+        // Copy User ID safely to clipboard
+        function copyUserId() {
+            if (!tg || !tg.initDataUnsafe || !tg.initDataUnsafe.user) return;
+            const uid = tg.initDataUnsafe.user.id.toString();
+            
+            // Hidden native copy mechanics for iframe support
+            const textarea = document.createElement('textarea');
+            textarea.value = uid;
+            textarea.style.position = 'fixed';
+            document.body.appendChild(textarea);
+            textarea.select();
+            
+            try {
+                document.execCommand('copy');
+                showNotification(`Copied ID: ${uid}`);
+                if (tg.HapticFeedback) {
+                    tg.HapticFeedback.notificationOccurred('success');
+                }
+            } catch (err) {
+                showNotification("Could not copy ID");
+            } finally {
+                document.body.removeChild(textarea);
+            }
+        }
+
+        // Safely close webapp session
+        function closeApp() {
+            if (tg && tg.close) {
+                if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+                tg.close();
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (tg) {
+                // Instantly notify Telegram that web app is rendering
+                tg.expand();
+                tg.ready();
+
+                // Get User Payload
+                const user = tg.initDataUnsafe?.user;
+
+                if (user) {
+                    // Update user text elements
+                    document.getElementById('first-name').textContent = user.first_name || 'Premium';
+                    document.getElementById('last-name').textContent = user.last_name || 'User';
+                    
+                    if (user.username) {
+                        document.getElementById('username').textContent = `@${user.username}`;
+                    } else {
+                        document.getElementById('username').classList.add('hidden');
+                    }
+                    
+                    document.getElementById('user-id').textContent = `ID: ${user.id}`;
+                    document.getElementById('user-lang').textContent = (user.language_code || 'en').toUpperCase();
+                    document.getElementById('user-platform').textContent = (tg.platform || 'mobile').toUpperCase();
+
+                    // Load user avatar with clean dynamic SVG fallback
+                    const avatarImg = document.getElementById('user-avatar');
+                    if (user.photo_url) {
+                        avatarImg.src = user.photo_url;
+                    } else {
+                        // Creates beautiful initial-based gradient avatar if no photo is registered
+                        const initials = ((user.first_name || 'T')[0] + (user.last_name || 'G')[0]).toUpperCase();
+                        avatarImg.src = `https://api.dicebear.com/7.x/initials/svg?seed=${initials}&backgroundType=gradientLinear&backgroundRotation=45`;
+                    }
+                } else {
+                    // Fail-safe view for external browser access
+                    document.getElementById('first-name').textContent = 'Guest';
+                    document.getElementById('last-name').textContent = 'Account';
+                    document.getElementById('username').textContent = '@unauthenticated';
+                    document.getElementById('user-avatar').src = 'https://api.dicebear.com/7.x/bottts/svg?seed=tele';
+                }
+
+                // Add Telegram's premium Native Main Button interaction
+                if (tg.MainButton) {
+                    tg.MainButton.setText("CLOSE WINDOW");
+                    tg.MainButton.show();
+                    tg.MainButton.onClick(() => {
+                        closeApp();
+                    });
+                    
+                    // Match Main Button Colors manually to match theme perfectly
+                    tg.MainButton.setParams({
+                        button_color: tg.themeParams.button_color || '#2481cc',
+                        button_text_color: tg.themeParams.button_text_color || '#ffffff'
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>
