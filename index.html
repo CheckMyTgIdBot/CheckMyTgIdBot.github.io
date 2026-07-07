@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>My Profile Dashboard</title>
     <!-- Tailwind CSS for utility styling -->
@@ -80,12 +80,12 @@
     <!-- Interactive Interactive Background Matrix via Canvas -->
     <canvas id="bg-matrix" class="absolute inset-0 w-full h-full z-0 pointer-events-none opacity-60"></canvas>
 
-    <!-- Main Dashboard Container -->
-    <div class="flex-1 flex flex-col justify-between px-5 pt-8 pb-4 z-10 select-none">
+    <!-- Main Dashboard Container with top padding optimized for "Chiudi" top app bar -->
+    <div class="flex-1 flex flex-col justify-between px-5 pt-16 pb-6 z-10 select-none">
         
         <!-- Header Profile Visuals (Static & Fully Optimized) -->
         <div class="flex flex-col items-center justify-center shrink-0">
-            <!-- Avatar Frame (Removed Star Badge Overlay) -->
+            <!-- Avatar Frame -->
             <div class="relative pointer-events-auto">
                 <div class="absolute -inset-1 bg-gradient-to-tr from-[var(--link-color)] to-purple-500 rounded-full blur-md opacity-25"></div>
                 <img 
@@ -135,7 +135,7 @@
             </button>
         </div>
 
-        <!-- List Data Card (Fits screen view ports precisely) -->
+        <!-- List Data Card (Fits screen view ports precisely with enhanced bottom spacing) -->
         <div class="flex-1 flex flex-col justify-center min-h-0">
             <div class="tg-secondary-bg/80 backdrop-blur-xl rounded-2xl divide-y divide-white/5 overflow-hidden shadow-2xl border border-white/5">
                 
@@ -241,8 +241,8 @@
         <span id="toast-message" class="text-xs font-bold">Copiato con successo!</span>
     </div>
 
-    <!-- Spacer representing physical alignment space -->
-    <div class="h-1"></div>
+    <!-- Optimized spacing above the Telegram bottom MainButton safe-area -->
+    <div class="h-6 shrink-0"></div>
 
     <!-- Logic Engine & Canvas Background Animation -->
     <script>
