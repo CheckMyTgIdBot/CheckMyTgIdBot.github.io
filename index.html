@@ -53,6 +53,11 @@
         .tg-link { color: var(--link-color); }
         .tg-secondary-bg { background-color: var(--secondary-bg-color); }
         
+        /* Telegram dynamic border accents */
+        .tg-border-accent {
+            border-color: rgba(142, 142, 147, 0.2);
+        }
+
         /* Modern Glassmorphic Action Buttons */
         .tg-btn-action {
             background-color: rgba(255, 255, 255, 0.08);
@@ -247,21 +252,21 @@
 
     </div>
 
-    <!-- Cool Native Slide-up Bottom Sheet Modal -->
+    <!-- Cool Native Slide-up Bottom Sheet Modal (Synced with Telegram dynamic system colors) -->
     <div id="bottom-sheet-backdrop" onclick="closeBottomSheet()" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden opacity-0 transition-opacity duration-300"></div>
     
     <!-- Unified Dynamic Modal Sheet -->
-    <div id="bottom-sheet" class="fixed bottom-0 left-0 right-0 max-h-[85vh] bg-slate-950/95 backdrop-blur-2xl border-t border-white/10 rounded-t-3xl p-6 z-50 transform translate-y-full flex flex-col space-y-4 shadow-2xl">
+    <div id="bottom-sheet" class="fixed bottom-0 left-0 right-0 max-h-[85vh] tg-secondary-bg border-t tg-border-accent rounded-t-3xl p-6 z-50 transform translate-y-full flex flex-col space-y-4 shadow-2xl">
         <!-- Drag Handle Indicator -->
-        <div class="w-12 h-1.5 bg-white/20 rounded-full mx-auto shrink-0 mb-2 cursor-pointer" onclick="closeBottomSheet()"></div>
+        <div class="w-12 h-1.5 opacity-30 rounded-full mx-auto shrink-0 mb-2 cursor-pointer" style="background-color: var(--text-color);" onclick="closeBottomSheet()"></div>
         
         <!-- Dynamic Header Configuration -->
-        <div class="flex items-center justify-between pb-3 border-b border-white/5">
+        <div class="flex items-center justify-between pb-3 border-b tg-border-accent">
             <div class="flex items-center space-x-2">
                 <i id="modal-icon" data-lucide="terminal" class="w-5 h-5 text-indigo-400"></i>
                 <h3 id="modal-title" class="text-sm font-black uppercase tracking-wider text-indigo-400">Diagnostic Raw Payload</h3>
             </div>
-            <button onclick="closeBottomSheet()" class="text-xs font-bold text-white/50 active:text-white px-2 py-1 bg-white/5 rounded-lg">Close</button>
+            <button onclick="closeBottomSheet()" class="text-xs font-bold active:opacity-60 px-2.5 py-1.5 rounded-lg border tg-border-accent" style="color: var(--text-color); background-color: var(--bg-color);">Chiudi</button>
         </div>
 
         <!-- Sheet Content Switch Container -->
@@ -270,45 +275,45 @@
             <div id="diagnostic-container" class="space-y-4">
                 <div class="space-y-1">
                     <span class="text-[10px] uppercase tracking-wider tg-hint font-bold">Authentication Date</span>
-                    <div id="auth-date" class="font-mono text-xs break-all py-2 px-3 rounded-xl bg-black/50 text-slate-200 border border-white/5">N/A</div>
+                    <div id="auth-date" class="font-mono text-xs break-all py-2.5 px-3 rounded-xl border tg-border-accent font-semibold" style="background-color: var(--bg-color); color: var(--text-color);">N/A</div>
                 </div>
                 <div class="space-y-1">
                     <span class="text-[10px] uppercase tracking-wider tg-hint font-bold">SHA-256 HMAC Signature</span>
-                    <div id="hash-signature" class="font-mono text-[11px] break-all py-2 px-3 rounded-xl bg-black/50 text-slate-200 border border-white/5">N/A</div>
+                    <div id="hash-signature" class="font-mono text-[11px] break-all py-2.5 px-3 rounded-xl border tg-border-accent font-semibold" style="background-color: var(--bg-color); color: var(--text-color);">N/A</div>
                 </div>
                 <div class="space-y-1 flex-1 flex flex-col">
                     <span class="text-[10px] uppercase tracking-wider tg-hint font-bold">Payload JSON</span>
-                    <textarea id="raw-payload" readonly class="w-full h-32 font-mono text-[10px] bg-black/50 text-slate-400 p-3 rounded-xl focus:outline-none resize-none border border-white/5"></textarea>
+                    <textarea id="raw-payload" readonly class="w-full h-32 font-mono text-[10px] p-3 rounded-xl focus:outline-none resize-none border tg-border-accent" style="background-color: var(--bg-color); color: var(--hint-color);"></textarea>
                 </div>
             </div>
 
             <!-- Dynamic QR Container Layout Placeholder -->
             <div id="qr-container" class="hidden flex flex-col items-center justify-center text-center py-6 space-y-4">
                 <div id="qrcode-canvas" class="bg-white p-3 rounded-2xl shadow-xl inline-block"></div>
-                <p class="text-xs tg-hint max-w-xs font-medium">Scansiona questo codice per condividere istantaneamente il tuo contatto o visualizzare le informazioni sul bot.</p>
+                <p class="text-xs tg-hint max-w-xs font-semibold">Scansiona questo codice per condividere istantaneamente il tuo contatto o visualizzare le informazioni sul bot.</p>
             </div>
         </div>
     </div>
 
-    <!-- Dedicated Interactive Passport Exporter Overlay Card (Guarantees iFrame Saving Works) -->
-    <div id="passport-modal-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] hidden flex-col items-center justify-center p-6 transition-all duration-300">
-        <div class="w-full max-w-sm flex flex-col space-y-4 text-center">
-            <h3 class="text-sm font-bold uppercase tracking-wider text-amber-400 flex items-center justify-center gap-2">
+    <!-- Dedicated Interactive Passport Exporter Overlay Card (Fully matches Telegram system themes) -->
+    <div id="passport-modal-overlay" class="fixed inset-0 bg-black/75 backdrop-blur-md z-[100] hidden flex-col items-center justify-center p-6 transition-all duration-300">
+        <div class="w-full max-w-sm tg-secondary-bg border tg-border-accent p-6 rounded-3xl flex flex-col space-y-4 text-center shadow-2xl relative z-50">
+            <h3 class="text-sm font-bold uppercase tracking-wider text-amber-500 flex items-center justify-center gap-2">
                 <i data-lucide="sparkles" class="w-4 h-4"></i> ID Passport Generato
             </h3>
             
             <!-- Target visual image display (Long-press to save directly) -->
-            <div class="relative overflow-hidden rounded-2xl border border-white/10 shadow-2xl bg-slate-900/60 p-2">
+            <div class="relative overflow-hidden rounded-2xl border tg-border-accent p-2" style="background-color: var(--bg-color);">
                 <img id="exported-passport-img" class="w-full h-auto rounded-xl object-contain pointer-events-auto cursor-pointer" alt="Tieni premuto per salvare" />
             </div>
             
-            <p class="text-xs text-slate-400 px-4 leading-relaxed font-medium">
-                👉 <span class="text-white font-bold">Tieni premuto sull'immagine</span> sopra per salvarla o condividerla direttamente tramite il menu nativo del tuo telefono.
+            <p class="text-xs leading-relaxed font-semibold tg-hint px-2">
+                👉 <span class="font-bold" style="color: var(--text-color);">Tieni premuto sull'immagine</span> sopra per salvarla o condividerla direttamente tramite il menu nativo del tuo telefono.
             </p>
 
             <div class="flex space-x-3 pt-2">
-                <button onclick="closePassportModal()" class="flex-1 py-3 text-xs font-bold bg-white/10 text-white rounded-xl active:bg-white/15 transition-all">Chiudi</button>
-                <a id="direct-download-anchor" href="#" download="Passport_Card.png" class="flex-1 py-3 text-xs font-bold text-center rounded-xl transition-all flex items-center justify-center gap-1.5" style="background-color: var(--button-color); color: var(--button-text-color)">
+                <button onclick="closePassportModal()" class="flex-1 py-3 text-xs font-bold rounded-xl border tg-border-accent active:opacity-75 transition-all" style="background-color: var(--bg-color); color: var(--text-color);">Chiudi</button>
+                <a id="direct-download-anchor" href="#" download="Passport_Card.png" class="flex-1 py-3 text-xs font-bold text-center rounded-xl transition-all flex items-center justify-center gap-1.5 active:opacity-90" style="background-color: var(--button-color); color: var(--button-text-color)">
                     <i data-lucide="download" class="w-3.5 h-3.5"></i> Scarica File
                 </a>
             </div>
@@ -316,11 +321,11 @@
     </div>
 
     <!-- Native styled toast banner -->
-    <div id="custom-toast" class="opacity-0 translate-y-4 fixed bottom-6 left-6 right-6 tg-secondary-bg border border-black/5 dark:border-white/10 p-4 rounded-2xl shadow-2xl flex items-center space-x-3 transition-all duration-300 pointer-events-none z-50">
-        <div class="p-1.5 bg-[var(--button-color)] rounded-xl text-white">
+    <div id="custom-toast" class="opacity-0 translate-y-4 fixed bottom-6 left-6 right-6 tg-secondary-bg border tg-border-accent p-4 rounded-2xl shadow-2xl flex items-center space-x-3 transition-all duration-300 pointer-events-none z-50">
+        <div class="p-1.5 bg-[var(--button-color)] rounded-xl text-[var(--button-text-color)]">
             <i id="toast-icon" data-lucide="check" class="w-4 h-4"></i>
         </div>
-        <span id="toast-message" class="text-xs font-bold">Copiato con successo!</span>
+        <span id="toast-message" class="text-xs font-bold" style="color: var(--text-color);">Copiato con successo!</span>
     </div>
 
     <!-- Hidden Passport Export Engine Engine Canvas -->
