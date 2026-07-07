@@ -138,28 +138,28 @@
             </div>
         </div>
 
-        <!-- 3 Horizontal Action Buttons -->
+        <!-- 3 Horizontal Action Buttons (Clean bg-less design) -->
         <div class="grid grid-cols-3 gap-3 shrink-0 my-5">
             <!-- Action 1: Condividi -->
-            <button onclick="shareMyDetails()" class="tg-btn-action rounded-2xl py-3 flex flex-col items-center justify-center text-center space-y-1 shadow-sm">
-                <div class="p-1.5 rounded-xl bg-sky-500/10 text-sky-400">
-                    <i data-lucide="share-2" class="w-4.5 h-4.5"></i>
+            <button onclick="shareMyDetails()" class="tg-btn-action rounded-2xl py-3.5 flex flex-col items-center justify-center text-center space-y-1.5 shadow-sm">
+                <div class="text-sky-400">
+                    <i data-lucide="share-2" class="w-5 h-5"></i>
                 </div>
                 <span class="text-[11px] font-bold opacity-90">Condividi</span>
             </button>
             
             <!-- Action 2: Digital Passport Export -->
-            <button onclick="exportPassportCard()" class="tg-btn-action rounded-2xl py-3 flex flex-col items-center justify-center text-center space-y-1 shadow-sm">
-                <div class="p-1.5 rounded-xl bg-amber-500/10 text-amber-400">
-                    <i data-lucide="id-card" class="w-4.5 h-4.5"></i>
+            <button onclick="exportPassportCard()" class="tg-btn-action rounded-2xl py-3.5 flex flex-col items-center justify-center text-center space-y-1.5 shadow-sm">
+                <div class="text-amber-400">
+                    <i data-lucide="id-card" class="w-5 h-5"></i>
                 </div>
                 <span class="text-[11px] font-bold opacity-90">Salva Card</span>
             </button>
 
             <!-- Action 3: Session Details Panel -->
-            <button onclick="openBottomSheet()" class="tg-btn-action rounded-2xl py-3 flex flex-col items-center justify-center text-center space-y-1 shadow-sm">
-                <div class="p-1.5 rounded-xl bg-indigo-500/10 text-indigo-400">
-                    <i data-lucide="terminal" class="w-4.5 h-4.5"></i>
+            <button onclick="openBottomSheet()" class="tg-btn-action rounded-2xl py-3.5 flex flex-col items-center justify-center text-center space-y-1.5 shadow-sm">
+                <div class="text-indigo-400">
+                    <i data-lucide="terminal" class="w-5 h-5"></i>
                 </div>
                 <span class="text-[11px] font-bold opacity-90">Sessione</span>
             </button>
@@ -290,6 +290,31 @@
         </div>
     </div>
 
+    <!-- Dedicated Interactive Passport Exporter Overlay Card (Guarantees iFrame Saving Works) -->
+    <div id="passport-modal-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] hidden flex-col items-center justify-center p-6 transition-all duration-300">
+        <div class="w-full max-w-sm flex flex-col space-y-4 text-center">
+            <h3 class="text-sm font-bold uppercase tracking-wider text-amber-400 flex items-center justify-center gap-2">
+                <i data-lucide="sparkles" class="w-4 h-4"></i> ID Passport Generato
+            </h3>
+            
+            <!-- Target visual image display (Long-press to save directly) -->
+            <div class="relative overflow-hidden rounded-2xl border border-white/10 shadow-2xl bg-slate-900/60 p-2">
+                <img id="exported-passport-img" class="w-full h-auto rounded-xl object-contain pointer-events-auto cursor-pointer" alt="Tieni premuto per salvare" />
+            </div>
+            
+            <p class="text-xs text-slate-400 px-4 leading-relaxed font-medium">
+                👉 <span class="text-white font-bold">Tieni premuto sull'immagine</span> sopra per salvarla o condividerla direttamente tramite il menu nativo del tuo telefono.
+            </p>
+
+            <div class="flex space-x-3 pt-2">
+                <button onclick="closePassportModal()" class="flex-1 py-3 text-xs font-bold bg-white/10 text-white rounded-xl active:bg-white/15 transition-all">Chiudi</button>
+                <a id="direct-download-anchor" href="#" download="Passport_Card.png" class="flex-1 py-3 text-xs font-bold text-center rounded-xl transition-all flex items-center justify-center gap-1.5" style="background-color: var(--button-color); color: var(--button-text-color)">
+                    <i data-lucide="download" class="w-3.5 h-3.5"></i> Scarica File
+                </a>
+            </div>
+        </div>
+    </div>
+
     <!-- Native styled toast banner -->
     <div id="custom-toast" class="opacity-0 translate-y-4 fixed bottom-6 left-6 right-6 tg-secondary-bg border border-black/5 dark:border-white/10 p-4 rounded-2xl shadow-2xl flex items-center space-x-3 transition-all duration-300 pointer-events-none z-50">
         <div class="p-1.5 bg-[var(--button-color)] rounded-xl text-white">
@@ -310,7 +335,7 @@
         const tg = window.Telegram ? window.Telegram.WebApp : null;
 
         // Dynamic Accent Tracking Setup Matrix
-        let themeColorPrimary = '#3498db';
+        let themeColorPrimary = '#2481cc';
         let themeColorBg = '#ffffff';
 
         if (tg?.themeParams?.button_color) {
@@ -569,6 +594,27 @@
             }
         }
 
+        // --- MODAL CONTROLS FOR EXPORTED PASSPORT ---
+        function openPassportModal(dataUrl, uid) {
+            const modal = document.getElementById('passport-modal-overlay');
+            const img = document.getElementById('exported-passport-img');
+            const downloadAnchor = document.getElementById('direct-download-anchor');
+
+            img.src = dataUrl;
+            downloadAnchor.href = dataUrl;
+            downloadAnchor.download = `Passport_${uid}.png`;
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closePassportModal() {
+            const modal = document.getElementById('passport-modal-overlay');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+        }
+
         // --- EXPORT HIGH QUALITY CANVA CARD PASSPORT ENGINE ---
         function exportPassportCard() {
             if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
@@ -581,6 +627,9 @@
             const nameStr = user ? `${user.first_name} ${user.last_name || ''}`.trim() : 'Telegram User';
             const meta = calculateAccountMetadata(uidStr);
             const userTag = user?.username ? `@${user.username}` : 'Nessuno';
+
+            // Clean up drawing area
+            c.clearRect(0, 0, 600, 360);
 
             // Establish sleek digital gradient passport backing
             let gradient = c.createLinearGradient(0, 0, 600, 360);
@@ -609,7 +658,7 @@
             c.fillText('TELEGRAM ACCOUNT VERIFIED PASSPORT', 45, 40);
 
             c.fillStyle = '#ffffff';
-            c.font = 'bold 28px system-ui';
+            c.font = 'bold 28px system-ui, -apple-system';
             c.fillText(nameStr, 45, 65);
 
             c.fillStyle = 'rgba(255,255,255,0.4)';
@@ -644,39 +693,64 @@
             c.strokeStyle = 'rgba(255,255,255,0.1)';
             c.stroke();
 
-            // Inner graphic proxy identity representation
-            c.fillStyle = themeColorPrimary;
-            c.beginPath();
-            c.arc(485, 115, 28, 0, Math.PI * 2);
-            c.fill();
-            c.beginPath();
-            c.arc(485, 175, 45, Math.PI, 0);
-            c.fill();
+            // Setup CORS safe-guarded image loader
+            const proxyImg = new Image();
+            proxyImg.crossOrigin = "anonymous";
+            
+            // Try drawing custom photo first, fall back safely if tainted/CORS blocked
+            proxyImg.onload = function() {
+                c.save();
+                // Create clipping region inside avatar squircle
+                c.beginPath();
+                c.roundRect(420, 65, 130, 130, 20);
+                c.clip();
+                c.drawImage(proxyImg, 420, 65, 130, 130);
+                c.restore();
+                
+                finalizeCanvasExport();
+            };
 
-            // Compile runtime execution and serve image payload natively
-            setTimeout(() => {
+            proxyImg.onerror = function() {
+                // Secure backup: draw a beautiful high-tech initials avatar
+                drawFallbackInitials(c, nameStr);
+                finalizeCanvasExport();
+            };
+
+            // Feed image safely
+            const avatarSrc = document.getElementById('user-avatar').src;
+            if (avatarSrc && !avatarSrc.includes('dicebear.com') && avatarSrc.startsWith('http')) {
+                proxyImg.src = avatarSrc;
+            } else {
+                // Load fallback directly
+                drawFallbackInitials(c, nameStr);
+                finalizeCanvasExport();
+            }
+
+            function finalizeCanvasExport() {
                 try {
                     const dataUrl = canvasCard.toDataURL("image/png");
-                    const blobBin = atob(dataUrl.split(',')[1]);
-                    const array = [];
-                    for(let i = 0; i < blobBin.length; i++) {
-                        array.push(blobBin.charCodeAt(i));
-                    }
-                    const file = new Blob([new Uint8Array(array)], {type: 'image/png'});
-                    
-                    // Native anchor download sequence initialization
-                    const link = document.createElement('a');
-                    link.href = URL.createObjectURL(file);
-                    link.download = `Passport_${uidStr}.png`;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    
-                    showNotification("Card Salvata in Galleria!", "download");
+                    openPassportModal(dataUrl, uidStr);
                 } catch(e) {
                     showNotification("Errore di esportazione", "alert-circle");
                 }
-            }, 400);
+            }
+        }
+
+        // Draw dynamic avatar mock inside generated passport
+        function drawFallbackInitials(c, name) {
+            c.save();
+            c.beginPath();
+            c.roundRect(420, 65, 130, 130, 20);
+            c.fillStyle = themeColorPrimary;
+            c.fill();
+            
+            c.fillStyle = '#ffffff';
+            c.font = 'bold 44px system-ui, -apple-system';
+            c.textAlign = 'center';
+            c.textBaseline = 'middle';
+            const initials = name ? name.substring(0, 2).toUpperCase() : 'TG';
+            c.fillText(initials, 485, 130);
+            c.restore();
         }
 
         window.addEventListener('DOMContentLoaded', () => {
