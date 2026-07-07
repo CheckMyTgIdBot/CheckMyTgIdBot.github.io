@@ -4,24 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Telegram ID Checker</title>
-    <!-- Tailwind CSS for utility styles -->
+    <title>My Profile Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Official Telegram Web App SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <style>
         /* CSS Variable mapping to match Telegram's exact UI Theme */
         :root {
-            --bg-color: var(--tg-theme-bg-color, #0f172a);
-            --text-color: var(--tg-theme-text-color, #f8fafc);
-            --hint-color: var(--tg-theme-hint-color, #94a3b8);
-            --link-color: var(--tg-theme-link-color, #38bdf8);
-            --button-color: var(--tg-theme-button-color, #0284c7);
+            --bg-color: var(--tg-theme-bg-color, #0a0e1a);
+            --text-color: var(--tg-theme-text-color, #ffffff);
+            --hint-color: var(--tg-theme-hint-color, #8e8e93);
+            --link-color: var(--tg-theme-link-color, #3498db);
+            --button-color: var(--tg-theme-button-color, #2481cc);
             --button-text-color: var(--tg-theme-button-text-color, #ffffff);
-            --secondary-bg-color: var(--tg-theme-secondary-bg-color, #1e293b);
+            --secondary-bg-color: var(--tg-theme-secondary-bg-color, #131926);
         }
 
         body {
@@ -31,175 +28,324 @@
             -webkit-user-select: none;
             user-select: none;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            overflow: hidden; /* Strictly disable scrolling on body */
         }
 
-        /* Dynamic classes reflecting Telegram theme contexts */
         .tg-hint { color: var(--hint-color); }
         .tg-link { color: var(--link-color); }
         .tg-secondary-bg { background-color: var(--secondary-bg-color); }
-        .tg-border { border-color: rgba(255, 255, 255, 0.08); }
         
-        .profile-glow {
-            box-shadow: 0 10px 25px -10px var(--button-color);
+        /* Modern Glassmorphic Action Buttons */
+        .tg-btn-action {
+            background-color: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
-        /* Smooth Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 4px;
+        .tg-btn-action:active {
+            background-color: rgba(255, 255, 255, 0.12);
+            transform: scale(0.95);
+            border-color: rgba(255, 255, 255, 0.08);
         }
-        ::-webkit-scrollbar-track {
-            background: transparent;
+
+        /* Fixed Squircle style avatar matching Telegram premium profile layout */
+        .squircle-avatar {
+            border-radius: 30%;
         }
-        ::-webkit-scrollbar-thumb {
-            background: var(--secondary-bg-color);
-            border-radius: 99px;
+
+        /* Pulsing Online Dot */
+        .pulse-dot {
+            animation: pulse-dot-anim 1.8s infinite;
+        }
+
+        @keyframes pulse-dot-anim {
+            0% { transform: scale(0.9); opacity: 0.6; }
+            50% { transform: scale(1.15); opacity: 1; }
+            100% { transform: scale(0.9); opacity: 0.6; }
+        }
+
+        /* Bottom Sheet Slide Up Animation styles */
+        #bottom-sheet {
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between px-4 pb-6 pt-4 overflow-y-auto">
+<body class="h-screen w-screen flex flex-col justify-between overflow-hidden relative">
 
-    <!-- Main App Container -->
-    <main class="w-full max-w-md mx-auto space-y-6 flex-1 flex flex-col justify-center">
+    <canvas id="bg-matrix" class="absolute inset-0 w-full h-full z-0 pointer-events-none opacity-60"></canvas>
+
+    <div class="flex-1 flex flex-col justify-between px-5 pt-8 pb-4 z-10 select-none">
         
-        <!-- Profile Frame -->
-        <div class="flex flex-col items-center space-y-4">
-            <div class="relative">
-                <!-- Outer glow rings indicating premium status or normal theme -->
-                <div class="absolute -inset-1.5 bg-gradient-to-tr from-[var(--button-color)] to-purple-500 rounded-full blur opacity-30"></div>
-                <div class="relative">
-                    <img 
-                        id="user-avatar" 
-                        src="" 
-                        alt="Profile" 
-                        class="w-28 h-28 rounded-full object-cover border-4 border-[var(--bg-color)] profile-glow mx-auto transition-transform duration-300 active:scale-95"
-                    />
-                    <!-- Dynamic verified/premium badge -->
-                    <div id="premium-badge" class="absolute bottom-0 right-1 bg-[var(--button-color)] p-1.5 rounded-full border-2 border-[var(--bg-color)] text-[var(--button-text-color)] hidden">
-                        <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
-                    </div>
-                </div>
+        <div class="flex flex-col items-center justify-center shrink-0">
+            <div class="relative pointer-events-auto">
+                <div class="absolute -inset-1 bg-gradient-to-tr from-[var(--link-color)] to-purple-500 rounded-full blur-md opacity-25"></div>
+                <img 
+                    id="user-avatar" 
+                    src="" 
+                    alt="Profile" 
+                    class="w-32 h-32 squircle-avatar object-cover border-2 border-white/10 shadow-2xl mx-auto"
+                />
             </div>
 
-            <!-- Basic Name Tags -->
-            <div class="text-center space-y-1">
-                <h1 class="text-2xl font-bold tracking-tight">
-                    <span id="first-name">Telegram</span> 
-                    <span id="last-name" class="opacity-70">User</span>
+            <div class="text-center mt-4 space-y-1">
+                <h1 id="full-name" class="text-2xl font-extrabold tracking-tight text-white leading-none">
+                    null
                 </h1>
-                <p id="username" class="tg-link font-medium text-sm">@username</p>
-                
-                <!-- Dynamic copyable ID Badge -->
-                <div class="inline-flex items-center space-x-2 tg-secondary-bg px-3.5 py-1.5 rounded-full border tg-border mt-2 active:opacity-75 transition-opacity cursor-pointer" onclick="copyUserId()">
-                    <span id="user-id" class="text-xs font-mono font-bold tracking-wider">ID: ---------</span>
-                    <i data-lucide="copy" class="w-3.5 h-3.5 tg-hint"></i>
+                <div class="flex items-center justify-center space-x-1.5 mt-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 pulse-dot"></span>
+                    <p id="profile-status" class="text-xs font-semibold text-emerald-400">in linea</p>
                 </div>
             </div>
         </div>
 
-        <!-- Quick Info Blocks & Estimator Grid -->
-        <div class="grid grid-cols-2 gap-3">
-            <!-- Account Age Estimator Block -->
-            <div class="tg-secondary-bg border tg-border rounded-2xl p-3 flex items-start space-x-2.5">
-                <div class="p-2 bg-blue-500/10 rounded-xl text-blue-400">
-                    <i data-lucide="calendar" class="w-4 h-4"></i>
+        <div class="grid grid-cols-3 gap-3 shrink-0 my-5">
+            <button onclick="shareMyDetails()" class="tg-btn-action rounded-2xl py-3 flex flex-col items-center justify-center text-center space-y-1 shadow-lg">
+                <div class="p-1.5 rounded-xl bg-sky-500/10 text-sky-400">
+                    <i data-lucide="share-2" class="w-4.5 h-4.5"></i>
                 </div>
-                <div>
-                    <span class="text-[10px] tg-hint uppercase tracking-wider block font-semibold">Est. Created</span>
-                    <span id="est-age" class="font-bold text-xs">Loading...</span>
+                <span class="text-[11px] font-bold text-white/90">Condividi</span>
+            </button>
+            
+            <button onclick="copyUserId()" class="tg-btn-action rounded-2xl py-3 flex flex-col items-center justify-center text-center space-y-1 shadow-lg">
+                <div class="p-1.5 rounded-xl bg-purple-500/10 text-purple-400">
+                    <i data-lucide="copy" class="w-4.5 h-4.5"></i>
                 </div>
-            </div>
-
-            <!-- Premium Check Block -->
-            <div class="tg-secondary-bg border tg-border rounded-2xl p-3 flex items-start space-x-2.5">
-                <div class="p-2 bg-amber-500/10 rounded-xl text-amber-400">
-                    <i data-lucide="award" class="w-4 h-4"></i>
-                </div>
-                <div>
-                    <span class="text-[10px] tg-hint uppercase tracking-wider block font-semibold">Premium Status</span>
-                    <span id="premium-status" class="font-bold text-xs">Standard</span>
-                </div>
-            </div>
-
-            <!-- Platform Info -->
-            <div class="tg-secondary-bg border tg-border rounded-2xl p-3 flex items-start space-x-2.5">
-                <div class="p-2 bg-emerald-500/10 rounded-xl text-emerald-400">
-                    <i data-lucide="smartphone" class="w-4 h-4"></i>
-                </div>
-                <div>
-                    <span class="text-[10px] tg-hint uppercase tracking-wider block font-semibold">Client Platform</span>
-                    <span id="user-platform" class="font-bold text-xs">Unknown</span>
-                </div>
-            </div>
-
-            <!-- Language ISO -->
-            <div class="tg-secondary-bg border tg-border rounded-2xl p-3 flex items-start space-x-2.5">
-                <div class="p-2 bg-purple-500/10 rounded-xl text-purple-400">
-                    <i data-lucide="globe" class="w-4 h-4"></i>
-                </div>
-                <div>
-                    <span class="text-[10px] tg-hint uppercase tracking-wider block font-semibold">Language</span>
-                    <span id="user-lang" class="font-bold text-xs">EN</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Interactive Actions Menu -->
-        <div class="space-y-2">
-            <button onclick="shareMyDetails()" class="w-full flex items-center justify-between p-3.5 rounded-xl tg-secondary-bg hover:opacity-90 active:scale-98 transition-all border tg-border">
-                <div class="flex items-center space-x-3">
-                    <div class="p-2 bg-sky-500/10 rounded-lg text-sky-400">
-                        <i data-lucide="share-2" class="w-4 h-4"></i>
-                    </div>
-                    <span class="text-xs font-semibold">Share Account Card</span>
-                </div>
-                <i data-lucide="chevron-right" class="w-4 h-4 tg-hint"></i>
+                <span class="text-[11px] font-bold text-white/90">Copia ID</span>
             </button>
 
-            <!-- Diagnostic Expandable Header -->
-            <div class="border tg-border rounded-xl tg-secondary-bg overflow-hidden">
-                <button onclick="toggleDetails()" class="w-full flex items-center justify-between p-3.5 hover:opacity-95 transition-all">
-                    <div class="flex items-center space-x-3">
-                        <div class="p-2 bg-purple-500/10 rounded-lg text-purple-400">
-                            <i data-lucide="terminal" class="w-4 h-4"></i>
-                        </div>
-                        <span class="text-xs font-semibold">Developer Session Data</span>
-                    </div>
-                    <i id="chevron-icon" data-lucide="chevron-down" class="w-4 h-4 tg-hint transition-transform duration-200"></i>
-                </button>
+            <button onclick="openBottomSheet()" class="tg-btn-action rounded-2xl py-3 flex flex-col items-center justify-center text-center space-y-1 shadow-lg">
+                <div class="p-1.5 rounded-xl bg-indigo-500/10 text-indigo-400">
+                    <i data-lucide="terminal" class="w-4.5 h-4.5"></i>
+                </div>
+                <span class="text-[11px] font-bold text-white/90">Sessione</span>
+            </button>
+        </div>
+
+        <div class="flex-1 flex flex-col justify-center min-h-0">
+            <div class="tg-secondary-bg/80 backdrop-blur-xl rounded-2xl divide-y divide-white/5 overflow-hidden shadow-2xl border border-white/5">
                 
-                <!-- Expanded raw content -->
-                <div id="details-panel" class="hidden border-t tg-border p-3.5 space-y-3 bg-black/20">
-                    <p class="text-[10px] tg-hint">Below is the authentic cryptographically signed metadata transmitted by the Telegram Client.</p>
-                    <div class="space-y-1">
-                        <span class="text-[9px] uppercase tracking-wider tg-hint font-bold">Query Auth Date</span>
-                        <div id="auth-date" class="font-mono text-xs break-all py-1 px-2 rounded bg-black/40 text-slate-300">N/A</div>
+                <div class="px-5 py-[14px] flex items-center space-x-3.5 active:bg-white/5 transition-colors cursor-pointer" onclick="copyUserId()">
+                    <div class="text-sky-400 shrink-0">
+                        <i data-lucide="smartphone" class="w-5 h-5"></i>
                     </div>
-                    <div class="space-y-1">
-                        <span class="text-[9px] uppercase tracking-wider tg-hint font-bold">Hash Signature</span>
-                        <div id="hash-signature" class="font-mono text-xs break-all py-1 px-2 rounded bg-black/40 text-slate-300">N/A</div>
-                    </div>
-                    <div class="space-y-1">
-                        <span class="text-[9px] uppercase tracking-wider tg-hint font-bold">Raw Payload</span>
-                        <textarea id="raw-payload" readonly class="w-full h-24 font-mono text-[10px] bg-black/40 text-slate-400 p-2 rounded focus:outline-none resize-none border tg-border"></textarea>
+                    <div class="flex-1 min-w-0">
+                        <p id="cell-id" class="text-sm font-semibold text-white tracking-wider truncate">null</p>
+                        <p class="text-[10px] tg-hint mt-0.5 uppercase tracking-wider font-semibold">User ID</p>
                     </div>
                 </div>
+
+                <div class="px-5 py-[14px] flex items-center space-x-3.5">
+                    <div class="text-purple-400 shrink-0">
+                        <i data-lucide="at-sign" class="w-5 h-5"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p id="username-display" class="text-sm font-semibold text-white truncate">null</p>
+                        <p class="text-[10px] tg-hint mt-0.5 uppercase tracking-wider font-semibold">Username</p>
+                    </div>
+                </div>
+
+                <div class="px-5 py-[14px] flex items-center space-x-3.5">
+                    <div class="text-amber-400 shrink-0">
+                        <i data-lucide="quote" class="w-5 h-5"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p id="bio-display" class="text-sm font-semibold text-white">null</p>
+                        <p class="text-[10px] tg-hint mt-0.5 uppercase tracking-wider font-semibold">Bio</p>
+                    </div>
+                </div>
+
+                <div class="px-5 py-[14px] flex items-center space-x-3.5">
+                    <div class="text-emerald-400 shrink-0">
+                        <i data-lucide="calendar" class="w-5 h-5"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p id="est-creation" class="text-sm font-semibold text-white">null</p>
+                        <p class="text-[10px] tg-hint mt-0.5 uppercase tracking-wider font-semibold">Anno di Registrazione</p>
+                    </div>
+                </div>
+
+                <div class="px-5 py-[14px] flex items-center space-x-3.5">
+                    <div class="text-pink-400 shrink-0">
+                        <i data-lucide="globe" class="w-5 h-5"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center space-x-2 text-sm font-semibold text-white">
+                            <span id="user-platform">null</span>
+                            <span class="opacity-30">|</span>
+                            <span id="user-lang">null</span>
+                        </div>
+                        <p class="text-[10px] tg-hint mt-0.5 uppercase tracking-wider font-semibold">Device & Lingua</p>
+                    </div>
+                </div>
+
             </div>
         </div>
 
-    </main>
-
-    <!-- Native styled toast banner -->
-    <div id="custom-toast" class="opacity-0 translate-y-4 fixed bottom-6 left-6 right-6 tg-secondary-bg border tg-border p-3 rounded-xl shadow-2xl flex items-center space-x-3 transition-all duration-300 pointer-events-none z-50">
-        <div class="p-1.5 bg-[var(--button-color)] rounded-lg text-[var(--button-text-color)]">
-            <i data-lucide="check" class="w-4 h-4"></i>
-        </div>
-        <span id="toast-message" class="text-xs font-medium">Copied successfully</span>
     </div>
 
-    <!-- Scripting & Analytics -->
+    <div id="bottom-sheet-backdrop" onclick="closeBottomSheet()" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden opacity-0 transition-opacity duration-300"></div>
+    <div id="bottom-sheet" class="fixed bottom-0 left-0 right-0 max-h-[85vh] bg-slate-950/95 backdrop-blur-2xl border-t border-white/10 rounded-t-3xl p-6 z-50 transform translate-y-full flex flex-col space-y-4 shadow-2xl">
+        <div class="w-12 h-1.5 bg-white/20 rounded-full mx-auto shrink-0 mb-2 cursor-pointer" onclick="closeBottomSheet()"></div>
+        
+        <div class="flex items-center justify-between pb-3 border-b border-white/5">
+            <div class="flex items-center space-x-2">
+                <i data-lucide="terminal" class="w-5 h-5 text-indigo-400"></i>
+                <h3 class="text-sm font-black uppercase tracking-wider text-indigo-400">Diagnostic Raw Payload</h3>
+            </div>
+            <button onclick="closeBottomSheet()" class="text-xs font-bold text-white/50 active:text-white px-2 py-1 bg-white/5 rounded-lg">Close</button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto space-y-4 pr-1">
+            <div class="space-y-1">
+                <span class="text-[10px] uppercase tracking-wider tg-hint font-bold">Authentication Date</span>
+                <div id="auth-date" class="font-mono text-xs break-all py-2 px-3 rounded-xl bg-black/50 text-slate-200 border border-white/5">N/A</div>
+            </div>
+            <div class="space-y-1">
+                <span class="text-[10px] uppercase tracking-wider tg-hint font-bold">SHA-256 HMAC Signature</span>
+                <div id="hash-signature" class="font-mono text-[11px] break-all py-2 px-3 rounded-xl bg-black/50 text-slate-200 border border-white/5">N/A</div>
+            </div>
+            <div class="space-y-1 flex-1 flex flex-col">
+                <span class="text-[10px] uppercase tracking-wider tg-hint font-bold">Payload JSON</span>
+                <textarea id="raw-payload" readonly class="w-full h-40 font-mono text-[10px] bg-black/50 text-slate-400 p-3 rounded-xl focus:outline-none resize-none border border-white/5"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <div id="custom-toast" class="opacity-0 translate-y-4 fixed bottom-6 left-6 right-6 tg-secondary-bg border border-white/10 p-4 rounded-2xl shadow-2xl flex items-center space-x-3 transition-all duration-300 pointer-events-none z-50">
+        <div class="p-1.5 bg-[var(--button-color)] rounded-xl text-white">
+            <i data-lucide="check" class="w-4 h-4"></i>
+        </div>
+        <span id="toast-message" class="text-xs font-bold">Copiato con successo!</span>
+    </div>
+
+    <div class="h-1"></div>
+
     <script>
         lucide.createIcons();
         const tg = window.Telegram ? window.Telegram.WebApp : null;
+
+        // --- HTML5 CANVAS MATRIX RUNTIME ---
+        const canvas = document.getElementById('bg-matrix');
+        const ctx = canvas.getContext('2d');
+
+        let particles = [];
+        const maxParticles = 45;
+        let interactionPointer = { x: null, y: null, radius: 120 };
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Trace finger/cursor position updates for dynamic vector attraction
+        window.addEventListener('mousemove', (e) => {
+            interactionPointer.x = e.clientX;
+            interactionPointer.y = e.clientY;
+        });
+        window.addEventListener('touchmove', (e) => {
+            if(e.touches.length > 0) {
+                interactionPointer.x = e.touches[0].clientX;
+                interactionPointer.y = e.touches[0].clientY;
+            }
+        });
+        window.addEventListener('mouseleave', () => {
+            interactionPointer.x = null;
+            interactionPointer.y = null;
+        });
+
+        class MatrixParticle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.radius = Math.random() * 2.5 + 1;
+                this.speedX = Math.random() * 0.4 - 0.2;
+                this.speedY = Math.random() * 0.4 - 0.2;
+                this.baseAlpha = Math.random() * 0.3 + 0.15;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+
+                // Simple gravity nexus pull tracking interaction target
+                if (interactionPointer.x !== null && interactionPointer.y !== null) {
+                    let dx = interactionPointer.x - this.x;
+                    let dy = interactionPointer.y - this.y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < interactionPointer.radius) {
+                        this.x += (dx / distance) * 0.5;
+                        this.y += (dy / distance) * 0.5;
+                    }
+                }
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(52, 152, 219, ${this.baseAlpha})`;
+                ctx.fill();
+            }
+        }
+
+        // Generate cluster nodes setup
+        for (let i = 0; i < maxParticles; i++) {
+            particles.push(new MatrixParticle());
+        }
+
+        function drawConnections() {
+            for (let a = 0; a < particles.length; a++) {
+                for (let b = a + 1; b < particles.length; b++) {
+                    let dx = particles[a].x - particles[b].x;
+                    let dy = particles[a].y - particles[b].y;
+                    let dist = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (dist < 110) {
+                        let alpha = (1 - (dist / 110)) * 0.12;
+                        ctx.strokeStyle = `rgba(139, 92, 246, ${alpha})`;
+                        ctx.lineWidth = 0.8;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[a].x, particles[a].y);
+                        ctx.lineTo(particles[b].x, particles[b].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function renderMatrixLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            drawConnections();
+            requestAnimationFrame(renderMatrixLoop);
+        }
+        renderMatrixLoop();
+
+
+        // --- DASHBOARD TELEGRAM APP INTERFACES INTERACTION ---
+        const bottomSheet = document.getElementById('bottom-sheet');
+        const backdrop = document.getElementById('bottom-sheet-backdrop');
+
+        function openBottomSheet() {
+            backdrop.classList.remove('hidden');
+            setTimeout(() => backdrop.classList.add('opacity-100'), 10);
+            bottomSheet.style.transform = "translateY(0)";
+            if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+        }
+
+        function closeBottomSheet() {
+            backdrop.classList.remove('opacity-100');
+            bottomSheet.style.transform = "translateY(100%)";
+            setTimeout(() => backdrop.classList.add('hidden'), 300);
+            if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+        }
 
         function showNotification(message) {
             const toast = document.getElementById('custom-toast');
@@ -212,14 +358,12 @@
             setTimeout(() => {
                 toast.classList.remove('opacity-100', 'translate-y-0');
                 toast.classList.add('opacity-0', 'translate-y-4');
-            }, 2200);
+            }, 2000);
         }
 
-        // Estimates registration year from typical ID milestones
         function estimateAccountCreation(uid) {
             const idNum = parseInt(uid, 10);
-            if (isNaN(idNum)) return 'N/A';
-            
+            if (isNaN(idNum)) return 'null';
             if (idNum < 10000000) return '2008 - 2011';
             if (idNum < 50000000) return '2012 - 2013';
             if (idNum < 150000000) return '2014 - 2015';
@@ -234,9 +378,16 @@
         }
 
         function copyUserId() {
-            if (!tg?.initDataUnsafe?.user) return;
-            const uid = tg.initDataUnsafe.user.id.toString();
+            let uid = "null";
+            if (tg?.initDataUnsafe?.user) {
+                uid = tg.initDataUnsafe.user.id.toString();
+            }
             
+            if (uid === "null") {
+                showNotification("Nessun ID da copiare");
+                return;
+            }
+
             const textarea = document.createElement('textarea');
             textarea.value = uid;
             textarea.style.position = 'fixed';
@@ -245,41 +396,34 @@
             
             try {
                 document.execCommand('copy');
-                showNotification(`Copied ID: ${uid}`);
-                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                showNotification(`ID Copiato: ${uid}`);
+                if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             } catch (err) {
-                showNotification("Could not copy ID");
+                showNotification("Errore nella copia");
             } finally {
                 document.body.removeChild(textarea);
             }
         }
 
-        function toggleDetails() {
-            const panel = document.getElementById('details-panel');
-            const icon = document.getElementById('chevron-icon');
-            const isHidden = panel.classList.toggle('hidden');
-            
-            if (isHidden) {
-                icon.style.transform = 'rotate(0deg)';
-            } else {
-                icon.style.transform = 'rotate(180deg)';
-            }
-            if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-        }
-
         function shareMyDetails() {
-            if (!tg?.initDataUnsafe?.user) return;
-            const user = tg.initDataUnsafe.user;
+            let user = tg?.initDataUnsafe?.user;
+            
+            const uidStr = user ? user.id : 'null';
+            const nameStr = user ? `${user.first_name} ${user.last_name || ''}`.trim() : 'null';
+            const premStr = user ? (user.is_premium ? 'Sì' : 'No') : 'null';
+            const ageStr = user ? estimateAccountCreation(user.id) : 'null';
+
             const text = encodeURIComponent(
-                `📊 *My Telegram Identity Verification*\n\n` +
-                `👤 Name: ${user.first_name} ${user.last_name || ''}\n` +
-                `🆔 User ID: ${user.id}\n` +
-                `📅 Registration Range: ${estimateAccountCreation(user.id)}\n` +
-                `🌟 Premium status: ${user.is_premium ? 'Yes' : 'No'}`
+                `📊 *Telegram ID Checker Info*\n\n` +
+                `👤 Nome: ${nameStr}\n` +
+                `🆔 ID Utente: ${uidStr}\n` +
+                `📅 Anno Stimato: ${ageStr}\n` +
+                `🌟 Premium: ${premStr}`
             );
             
-            // Fires Telegram share dialog safely
-            tg.openTelegramLink(`https://t.me/share/url?url=${text}`);
+            if (tg) {
+                tg.openTelegramLink(`https://t.me/share/url?url=${text}`);
+            }
         }
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -287,47 +431,37 @@
                 tg.expand();
                 tg.ready();
 
-                const user = tg.initDataUnsafe?.user;
-                
-                // Set native closing mechanisms
                 if (tg.MainButton) {
                     tg.MainButton.setText("CLOSE CHECKER");
                     tg.MainButton.show();
                     tg.MainButton.onClick(() => {
+                        if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
                         tg.close();
                     });
                     tg.MainButton.setParams({
-                        button_color: tg.themeParams.button_color || '#0284c7',
+                        button_color: tg.themeParams.button_color || '#2481cc',
                         button_text_color: tg.themeParams.button_text_color || '#ffffff'
                     });
                 }
 
+                const user = tg.initDataUnsafe?.user;
+
                 if (user) {
-                    document.getElementById('first-name').textContent = user.first_name || 'Premium';
-                    document.getElementById('last-name').textContent = user.last_name || '';
+                    const fullName = `${user.first_name || ''} ${user.last_name || ''}`.trim();
+                    document.getElementById('full-name').textContent = fullName || 'null';
                     
                     if (user.username) {
-                        document.getElementById('username').textContent = `@${user.username}`;
+                        document.getElementById('username-display').textContent = `@${user.username}`;
                     } else {
-                        document.getElementById('username').classList.add('hidden');
+                        document.getElementById('username-display').textContent = 'Nessuno';
                     }
                     
-                    document.getElementById('user-id').textContent = `ID: ${user.id}`;
-                    document.getElementById('user-lang').textContent = (user.language_code || 'en').toUpperCase();
+                    document.getElementById('cell-id').textContent = user.id;
+                    document.getElementById('bio-display').textContent = '🌙 🐺';
+                    document.getElementById('user-lang').textContent = `${(user.language_code || 'it').toUpperCase()}`;
                     document.getElementById('user-platform').textContent = (tg.platform || 'mobile').toUpperCase();
-                    
-                    // Display Age Estimation
-                    document.getElementById('est-age').textContent = estimateAccountCreation(user.id);
+                    document.getElementById('est-creation').textContent = `${estimateAccountCreation(user.id)} (Estimated)`;
 
-                    // Premium Checking
-                    if (user.is_premium) {
-                        document.getElementById('premium-status').textContent = 'Premium User';
-                        document.getElementById('premium-badge').classList.remove('hidden');
-                    } else {
-                        document.getElementById('premium-status').textContent = 'Standard';
-                    }
-
-                    // Populate diagnostic panels
                     if (tg.initDataUnsafe.auth_date) {
                         const dateVal = new Date(tg.initDataUnsafe.auth_date * 1000);
                         document.getElementById('auth-date').textContent = dateVal.toUTCString();
@@ -335,7 +469,6 @@
                     document.getElementById('hash-signature').textContent = tg.initDataUnsafe.hash || 'N/A';
                     document.getElementById('raw-payload').value = JSON.stringify(tg.initDataUnsafe, null, 2);
 
-                    // Build user avatar
                     const avatarImg = document.getElementById('user-avatar');
                     if (user.photo_url) {
                         avatarImg.src = user.photo_url;
@@ -344,15 +477,15 @@
                         avatarImg.src = `https://api.dicebear.com/7.x/initials/svg?seed=${initials}&backgroundType=gradientLinear&backgroundRotation=45`;
                     }
                 } else {
-                    // Failback mock
-                    document.getElementById('first-name').textContent = 'Roberto';
-                    document.getElementById('last-name').textContent = 'La Spina';
-                    document.getElementById('username').textContent = '@roblsp';
-                    document.getElementById('user-id').textContent = 'ID: 168069604';
-                    document.getElementById('est-age').textContent = estimateAccountCreation('168069604');
-                    document.getElementById('user-lang').textContent = 'IT';
-                    document.getElementById('user-platform').textContent = 'ANDROID';
-                    document.getElementById('user-avatar').src = 'https://api.dicebear.com/7.x/bottts/svg?seed=tele';
+                    // Fallback targets strictly showing explicit null strings until live dynamic loading
+                    document.getElementById('full-name').textContent = 'null';
+                    document.getElementById('username-display').textContent = 'null';
+                    document.getElementById('cell-id').textContent = 'null';
+                    document.getElementById('bio-display').textContent = 'null';
+                    document.getElementById('est-creation').textContent = 'null';
+                    document.getElementById('user-lang').textContent = 'null';
+                    document.getElementById('user-platform').textContent = 'null';
+                    document.getElementById('user-avatar').src = 'https://api.dicebear.com/7.x/initials/svg?seed=null&backgroundType=gradientLinear&backgroundColor=b6bec9';
                 }
             }
         });
