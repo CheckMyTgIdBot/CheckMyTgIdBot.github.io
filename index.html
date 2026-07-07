@@ -5,14 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>My Profile Dashboard</title>
+    <!-- Tailwind CSS for utility styling -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Official Telegram Web App SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <style>
         /* CSS Variable mapping to match Telegram's exact UI Theme */
         :root {
-            --bg-color: var(--tg-theme-bg-color, #0a0e1a);
+            --bg-color: var(--tg-theme-bg-color, #070a13);
             --text-color: var(--tg-theme-text-color, #ffffff);
             --hint-color: var(--tg-theme-hint-color, #8e8e93);
             --link-color: var(--tg-theme-link-color, #3498db);
@@ -74,11 +77,15 @@
 </head>
 <body class="h-screen w-screen flex flex-col justify-between overflow-hidden relative">
 
+    <!-- Interactive Interactive Background Matrix via Canvas -->
     <canvas id="bg-matrix" class="absolute inset-0 w-full h-full z-0 pointer-events-none opacity-60"></canvas>
 
+    <!-- Main Dashboard Container -->
     <div class="flex-1 flex flex-col justify-between px-5 pt-8 pb-4 z-10 select-none">
         
+        <!-- Header Profile Visuals (Static & Fully Optimized) -->
         <div class="flex flex-col items-center justify-center shrink-0">
+            <!-- Avatar Frame (Removed Star Badge Overlay) -->
             <div class="relative pointer-events-auto">
                 <div class="absolute -inset-1 bg-gradient-to-tr from-[var(--link-color)] to-purple-500 rounded-full blur-md opacity-25"></div>
                 <img 
@@ -89,6 +96,7 @@
                 />
             </div>
 
+            <!-- Profile Name & Pulsing Online Status -->
             <div class="text-center mt-4 space-y-1">
                 <h1 id="full-name" class="text-2xl font-extrabold tracking-tight text-white leading-none">
                     null
@@ -100,7 +108,9 @@
             </div>
         </div>
 
+        <!-- 3 Horizontal Action Buttons -->
         <div class="grid grid-cols-3 gap-3 shrink-0 my-5">
+            <!-- Action 1: Condividi -->
             <button onclick="shareMyDetails()" class="tg-btn-action rounded-2xl py-3 flex flex-col items-center justify-center text-center space-y-1 shadow-lg">
                 <div class="p-1.5 rounded-xl bg-sky-500/10 text-sky-400">
                     <i data-lucide="share-2" class="w-4.5 h-4.5"></i>
@@ -108,6 +118,7 @@
                 <span class="text-[11px] font-bold text-white/90">Condividi</span>
             </button>
             
+            <!-- Action 2: Copia ID -->
             <button onclick="copyUserId()" class="tg-btn-action rounded-2xl py-3 flex flex-col items-center justify-center text-center space-y-1 shadow-lg">
                 <div class="p-1.5 rounded-xl bg-purple-500/10 text-purple-400">
                     <i data-lucide="copy" class="w-4.5 h-4.5"></i>
@@ -115,6 +126,7 @@
                 <span class="text-[11px] font-bold text-white/90">Copia ID</span>
             </button>
 
+            <!-- Action 3: Session Details Panel -->
             <button onclick="openBottomSheet()" class="tg-btn-action rounded-2xl py-3 flex flex-col items-center justify-center text-center space-y-1 shadow-lg">
                 <div class="p-1.5 rounded-xl bg-indigo-500/10 text-indigo-400">
                     <i data-lucide="terminal" class="w-4.5 h-4.5"></i>
@@ -123,9 +135,11 @@
             </button>
         </div>
 
+        <!-- List Data Card (Fits screen view ports precisely) -->
         <div class="flex-1 flex flex-col justify-center min-h-0">
             <div class="tg-secondary-bg/80 backdrop-blur-xl rounded-2xl divide-y divide-white/5 overflow-hidden shadow-2xl border border-white/5">
                 
+                <!-- ID Cell -->
                 <div class="px-5 py-[14px] flex items-center space-x-3.5 active:bg-white/5 transition-colors cursor-pointer" onclick="copyUserId()">
                     <div class="text-sky-400 shrink-0">
                         <i data-lucide="smartphone" class="w-5 h-5"></i>
@@ -136,6 +150,7 @@
                     </div>
                 </div>
 
+                <!-- Username Cell -->
                 <div class="px-5 py-[14px] flex items-center space-x-3.5">
                     <div class="text-purple-400 shrink-0">
                         <i data-lucide="at-sign" class="w-5 h-5"></i>
@@ -146,6 +161,7 @@
                     </div>
                 </div>
 
+                <!-- Bio Cell -->
                 <div class="px-5 py-[14px] flex items-center space-x-3.5">
                     <div class="text-amber-400 shrink-0">
                         <i data-lucide="quote" class="w-5 h-5"></i>
@@ -156,6 +172,7 @@
                     </div>
                 </div>
 
+                <!-- Age / Creation Cell -->
                 <div class="px-5 py-[14px] flex items-center space-x-3.5">
                     <div class="text-emerald-400 shrink-0">
                         <i data-lucide="calendar" class="w-5 h-5"></i>
@@ -166,6 +183,7 @@
                     </div>
                 </div>
 
+                <!-- Platform / Language Unified Cell -->
                 <div class="px-5 py-[14px] flex items-center space-x-3.5">
                     <div class="text-pink-400 shrink-0">
                         <i data-lucide="globe" class="w-5 h-5"></i>
@@ -185,8 +203,10 @@
 
     </div>
 
+    <!-- Cool Native Slide-up Bottom Sheet Modal -->
     <div id="bottom-sheet-backdrop" onclick="closeBottomSheet()" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden opacity-0 transition-opacity duration-300"></div>
     <div id="bottom-sheet" class="fixed bottom-0 left-0 right-0 max-h-[85vh] bg-slate-950/95 backdrop-blur-2xl border-t border-white/10 rounded-t-3xl p-6 z-50 transform translate-y-full flex flex-col space-y-4 shadow-2xl">
+        <!-- Drag Handle Indicator -->
         <div class="w-12 h-1.5 bg-white/20 rounded-full mx-auto shrink-0 mb-2 cursor-pointer" onclick="closeBottomSheet()"></div>
         
         <div class="flex items-center justify-between pb-3 border-b border-white/5">
@@ -213,6 +233,7 @@
         </div>
     </div>
 
+    <!-- Native styled toast banner -->
     <div id="custom-toast" class="opacity-0 translate-y-4 fixed bottom-6 left-6 right-6 tg-secondary-bg border border-white/10 p-4 rounded-2xl shadow-2xl flex items-center space-x-3 transition-all duration-300 pointer-events-none z-50">
         <div class="p-1.5 bg-[var(--button-color)] rounded-xl text-white">
             <i data-lucide="check" class="w-4 h-4"></i>
@@ -220,8 +241,10 @@
         <span id="toast-message" class="text-xs font-bold">Copiato con successo!</span>
     </div>
 
+    <!-- Spacer representing physical alignment space -->
     <div class="h-1"></div>
 
+    <!-- Logic Engine & Canvas Background Animation -->
     <script>
         lucide.createIcons();
         const tg = window.Telegram ? window.Telegram.WebApp : null;
@@ -414,10 +437,10 @@
             const ageStr = user ? estimateAccountCreation(user.id) : 'null';
 
             const text = encodeURIComponent(
-                `📊 *Telegram ID Checker Info*\n\n` +
-                `👤 Nome: ${nameStr}\n` +
-                `🆔 ID Utente: ${uidStr}\n` +
-                `📅 Anno Stimato: ${ageStr}\n` +
+                `📊 MyID Bot @checkmytgidbot\n\n` +
+                `👤 Name: ${nameStr}\n` +
+                `🆔 ID: ${uidStr}\n` +
+                `📅 Age: ${ageStr}\n` +
                 `🌟 Premium: ${premStr}`
             );
             
@@ -477,7 +500,7 @@
                         avatarImg.src = `https://api.dicebear.com/7.x/initials/svg?seed=${initials}&backgroundType=gradientLinear&backgroundRotation=45`;
                     }
                 } else {
-                    // Fallback targets strictly showing explicit null strings until live dynamic loading
+                    // Fallback configuration displaying exactly "null" when loaded outside of Telegram
                     document.getElementById('full-name').textContent = 'null';
                     document.getElementById('username-display').textContent = 'null';
                     document.getElementById('cell-id').textContent = 'null';
