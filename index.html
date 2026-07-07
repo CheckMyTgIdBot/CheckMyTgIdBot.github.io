@@ -17,13 +17,13 @@
     <style>
         /* CSS Variable mapping to match Telegram's exact UI Theme */
         :root {
-            --bg-color: var(--tg-theme-bg-color, #070a13);
-            --text-color: var(--tg-theme-text-color, #ffffff);
+            --bg-color: var(--tg-theme-bg-color, #ffffff);
+            --text-color: var(--tg-theme-text-color, #000000);
             --hint-color: var(--tg-theme-hint-color, #8e8e93);
-            --link-color: var(--tg-theme-link-color, #3498db);
+            --link-color: var(--tg-theme-link-color, #2481cc);
             --button-color: var(--tg-theme-button-color, #2481cc);
             --button-text-color: var(--tg-theme-button-text-color, #ffffff);
-            --secondary-bg-color: var(--tg-theme-secondary-bg-color, #131926);
+            --secondary-bg-color: var(--tg-theme-secondary-bg-color, #f1f2f6);
         }
 
         body {
@@ -36,28 +36,50 @@
             overflow: hidden; /* Strictly disable scrolling on body */
         }
 
+        /* Responsive Banner representing the top accent region of 1000070240.png */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 128px; /* Perfectly aligned so avatar center sits on the baseline */
+            background-color: var(--button-color);
+            opacity: 0.35; /* Pastel opacity layer matching the accent color */
+            z-index: 1;
+        }
+
         .tg-hint { color: var(--hint-color); }
         .tg-link { color: var(--link-color); }
         .tg-secondary-bg { background-color: var(--secondary-bg-color); }
         
         /* Modern Glassmorphic Action Buttons */
         .tg-btn-action {
-            background-color: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.03);
+            background-color: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.03);
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
+        /* Dynamic style adjust for dark backgrounds */
+        @media (prefers-color-scheme: dark) {
+            .tg-btn-action {
+                background-color: rgba(255, 255, 255, 0.04);
+                border: 1px solid rgba(255, 255, 255, 0.03);
+            }
+        }
+        
         .tg-btn-action:active {
-            background-color: rgba(255, 255, 255, 0.12);
+            background-color: rgba(255, 255, 255, 0.15);
             transform: scale(0.95);
-            border-color: rgba(255, 255, 255, 0.08);
         }
 
-        /* Fixed Squircle style avatar matching Telegram premium profile layout */
+        /* Circle avatar style with white border and soft shadow */
         .squircle-avatar {
-            border-radius: 30%;
+            border-radius: 50% !important;
+            border: 4px solid var(--bg-color) !important;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12) !important;
         }
 
         /* Pulsing Online Dot */
@@ -86,7 +108,7 @@
 <body class="h-screen w-screen flex flex-col justify-between overflow-hidden relative">
 
     <!-- Interactive Interactive Background Matrix via Canvas -->
-    <canvas id="bg-matrix" class="absolute inset-0 w-full h-full z-0 pointer-events-none opacity-60"></canvas>
+    <canvas id="bg-matrix" class="absolute inset-0 w-full h-full z-0 pointer-events-none opacity-40"></canvas>
 
     <!-- Main Dashboard Container with top padding optimized for "Chiudi" top app bar -->
     <div class="flex-1 flex flex-col justify-between px-5 pt-16 pb-6 z-10 select-none">
@@ -95,18 +117,18 @@
         <div class="flex flex-col items-center justify-center shrink-0">
             <!-- Avatar Frame -->
             <div class="relative pointer-events-auto">
-                <div id="badge-glow" class="absolute -inset-1 bg-gradient-to-tr from-[var(--link-color)] to-purple-500 rounded-full blur-md opacity-25"></div>
+                <div id="badge-glow" class="absolute -inset-1 rounded-full blur-md opacity-0"></div>
                 <img 
                     id="user-avatar" 
                     src="" 
                     alt="Profile" 
-                    class="w-32 h-32 squircle-avatar object-cover border-2 border-white/10 shadow-2xl mx-auto"
+                    class="w-32 h-32 squircle-avatar object-cover mx-auto"
                 />
             </div>
 
             <!-- Profile Name & Pulsing Online Status -->
             <div class="text-center mt-4 space-y-1">
-                <h1 id="full-name" class="text-2xl font-extrabold tracking-tight text-white leading-none">
+                <h1 id="full-name" class="text-2xl font-extrabold tracking-tight leading-none">
                     null
                 </h1>
                 <div class="flex items-center justify-center space-x-1.5 mt-1.5">
@@ -119,61 +141,61 @@
         <!-- 3 Horizontal Action Buttons -->
         <div class="grid grid-cols-3 gap-3 shrink-0 my-5">
             <!-- Action 1: Condividi -->
-            <button onclick="shareMyDetails()" class="tg-btn-action rounded-2xl py-3 flex flex-col items-center justify-center text-center space-y-1 shadow-lg">
+            <button onclick="shareMyDetails()" class="tg-btn-action rounded-2xl py-3 flex flex-col items-center justify-center text-center space-y-1 shadow-sm">
                 <div class="p-1.5 rounded-xl bg-sky-500/10 text-sky-400">
                     <i data-lucide="share-2" class="w-4.5 h-4.5"></i>
                 </div>
-                <span class="text-[11px] font-bold text-white/90">Condividi</span>
+                <span class="text-[11px] font-bold opacity-90">Condividi</span>
             </button>
             
             <!-- Action 2: Digital Passport Export -->
-            <button onclick="exportPassportCard()" class="tg-btn-action rounded-2xl py-3 flex flex-col items-center justify-center text-center space-y-1 shadow-lg">
+            <button onclick="exportPassportCard()" class="tg-btn-action rounded-2xl py-3 flex flex-col items-center justify-center text-center space-y-1 shadow-sm">
                 <div class="p-1.5 rounded-xl bg-amber-500/10 text-amber-400">
                     <i data-lucide="id-card" class="w-4.5 h-4.5"></i>
                 </div>
-                <span class="text-[11px] font-bold text-white/90">Salva Card</span>
+                <span class="text-[11px] font-bold opacity-90">Salva Card</span>
             </button>
 
             <!-- Action 3: Session Details Panel -->
-            <button onclick="openBottomSheet()" class="tg-btn-action rounded-2xl py-3 flex flex-col items-center justify-center text-center space-y-1 shadow-lg">
+            <button onclick="openBottomSheet()" class="tg-btn-action rounded-2xl py-3 flex flex-col items-center justify-center text-center space-y-1 shadow-sm">
                 <div class="p-1.5 rounded-xl bg-indigo-500/10 text-indigo-400">
                     <i data-lucide="terminal" class="w-4.5 h-4.5"></i>
                 </div>
-                <span class="text-[11px] font-bold text-white/90">Sessione</span>
+                <span class="text-[11px] font-bold opacity-90">Sessione</span>
             </button>
         </div>
 
         <!-- List Data Card (Fits screen view ports precisely with enhanced bottom spacing) -->
         <div class="flex-1 flex flex-col justify-center min-h-0">
-            <div class="tg-secondary-bg/80 backdrop-blur-xl rounded-2xl divide-y divide-white/5 overflow-hidden shadow-2xl border border-white/5">
+            <div class="tg-secondary-bg rounded-3xl divide-y divide-black/5 dark:divide-white/5 overflow-hidden shadow-sm border border-black/5 dark:border-white/5">
                 
                 <!-- ID Cell (Triggers Copy, Shows Rarity Rank and inline Copy Button) -->
-                <div class="px-5 py-[14px] flex items-center justify-between active:bg-white/5 transition-colors cursor-pointer" onclick="copyUserId()">
+                <div class="px-5 py-[14px] flex items-center justify-between active:bg-black/5 dark:active:bg-white/5 transition-colors cursor-pointer" onclick="copyUserId()">
                     <div class="flex items-center space-x-3.5 min-w-0">
                         <div class="text-sky-400 shrink-0">
                             <i data-lucide="smartphone" class="w-5 h-5"></i>
                         </div>
                         <div class="min-w-0">
-                            <p id="cell-id" class="text-sm font-semibold text-white tracking-wider truncate">null</p>
+                            <p id="cell-id" class="text-sm font-semibold tracking-wider truncate">null</p>
                             <p class="text-[10px] tg-hint mt-0.5 uppercase tracking-wider font-semibold">User ID</p>
                         </div>
                     </div>
                     <div class="flex items-center space-x-2 shrink-0">
                         <span id="rarity-score-label" class="text-[10px] bg-sky-500/10 text-sky-400 px-2.5 py-0.5 rounded-md font-mono font-bold">-% Rarità</span>
-                        <div class="p-1.5 rounded-lg bg-white/5 border border-white/5 text-white/60 hover:text-white transition-all shadow-md">
+                        <div class="p-1.5 rounded-lg bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/5 opacity-60 hover:opacity-100 transition-all shadow-sm">
                             <i data-lucide="copy" class="w-3.5 h-3.5"></i>
                         </div>
                     </div>
                 </div>
 
                 <!-- Username Cell (Shows asset tier valuation context) -->
-                <div class="px-5 py-[14px] flex items-center justify-between active:bg-white/5 transition-colors cursor-pointer" onclick="openQrGateway()">
+                <div class="px-5 py-[14px] flex items-center justify-between active:bg-black/5 dark:active:bg-white/5 transition-colors cursor-pointer" onclick="openQrGateway()">
                     <div class="flex items-center space-x-3.5 min-w-0">
                         <div class="text-purple-400 shrink-0">
                             <i data-lucide="at-sign" class="w-5 h-5"></i>
                         </div>
                         <div class="min-w-0">
-                            <p id="username-display" class="text-sm font-semibold text-white truncate">null</p>
+                            <p id="username-display" class="text-sm font-semibold truncate">null</p>
                             <p class="text-[10px] tg-hint mt-0.5 uppercase tracking-wider font-semibold">Username & QR</p>
                         </div>
                     </div>
@@ -186,7 +208,7 @@
                         <i data-lucide="quote" class="w-5 h-5"></i>
                     </div>
                     <div class="flex-1 min-w-0">
-                        <p id="bio-display" class="text-sm font-semibold text-white">null</p>
+                        <p id="bio-display" class="text-sm font-semibold">null</p>
                         <p class="text-[10px] tg-hint mt-0.5 uppercase tracking-wider font-semibold">Bio</p>
                     </div>
                 </div>
@@ -198,7 +220,7 @@
                             <i data-lucide="calendar" class="w-5 h-5"></i>
                         </div>
                         <div class="min-w-0">
-                            <p id="est-creation" class="text-sm font-semibold text-white truncate">null</p>
+                            <p id="est-creation" class="text-sm font-semibold truncate">null</p>
                             <p class="text-[10px] tg-hint mt-0.5 uppercase tracking-wider font-semibold">Anno di Registrazione</p>
                         </div>
                     </div>
@@ -211,7 +233,7 @@
                         <i data-lucide="globe" class="w-5 h-5"></i>
                     </div>
                     <div class="flex-1 min-w-0">
-                        <div class="flex items-center space-x-2 text-sm font-semibold text-white">
+                        <div class="flex items-center space-x-2 text-sm font-semibold">
                             <span id="user-platform">null</span>
                             <span class="opacity-30">|</span>
                             <span id="user-lang">null</span>
@@ -269,7 +291,7 @@
     </div>
 
     <!-- Native styled toast banner -->
-    <div id="custom-toast" class="opacity-0 translate-y-4 fixed bottom-6 left-6 right-6 tg-secondary-bg border border-white/10 p-4 rounded-2xl shadow-2xl flex items-center space-x-3 transition-all duration-300 pointer-events-none z-50">
+    <div id="custom-toast" class="opacity-0 translate-y-4 fixed bottom-6 left-6 right-6 tg-secondary-bg border border-black/5 dark:border-white/10 p-4 rounded-2xl shadow-2xl flex items-center space-x-3 transition-all duration-300 pointer-events-none z-50">
         <div class="p-1.5 bg-[var(--button-color)] rounded-xl text-white">
             <i id="toast-icon" data-lucide="check" class="w-4 h-4"></i>
         </div>
@@ -289,12 +311,10 @@
 
         // Dynamic Accent Tracking Setup Matrix
         let themeColorPrimary = '#3498db';
-        let themeColorBg = '#070a13';
+        let themeColorBg = '#ffffff';
 
         if (tg?.themeParams?.button_color) {
             themeColorPrimary = tg.themeParams.button_color;
-            // Apply native color injection to frame accent glow dynamically
-            document.getElementById('badge-glow').style.background = `linear-gradient(to top right, ${themeColorPrimary}, #a855f7)`;
         }
 
         if (tg?.themeParams?.bg_color) {
