@@ -147,7 +147,7 @@
         <div class="flex-1 flex flex-col justify-center min-h-0">
             <div class="tg-secondary-bg/80 backdrop-blur-xl rounded-2xl divide-y divide-white/5 overflow-hidden shadow-2xl border border-white/5">
                 
-                <!-- ID Cell (Triggers Copy and Shows Rarity Rank) -->
+                <!-- ID Cell (Triggers Copy, Shows Rarity Rank and inline Copy Button) -->
                 <div class="px-5 py-[14px] flex items-center justify-between active:bg-white/5 transition-colors cursor-pointer" onclick="copyUserId()">
                     <div class="flex items-center space-x-3.5 min-w-0">
                         <div class="text-sky-400 shrink-0">
@@ -158,7 +158,12 @@
                             <p class="text-[10px] tg-hint mt-0.5 uppercase tracking-wider font-semibold">User ID</p>
                         </div>
                     </div>
-                    <span id="rarity-score-label" class="text-[10px] bg-sky-500/10 text-sky-400 px-2.5 py-0.5 rounded-md font-mono font-bold">-% Rarità</span>
+                    <div class="flex items-center space-x-2 shrink-0">
+                        <span id="rarity-score-label" class="text-[10px] bg-sky-500/10 text-sky-400 px-2.5 py-0.5 rounded-md font-mono font-bold">-% Rarità</span>
+                        <div class="p-1.5 rounded-lg bg-white/5 border border-white/5 text-white/60 hover:text-white transition-all shadow-md">
+                            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Username Cell (Shows asset tier valuation context) -->
@@ -284,10 +289,16 @@
 
         // Dynamic Accent Tracking Setup Matrix
         let themeColorPrimary = '#3498db';
+        let themeColorBg = '#070a13';
+
         if (tg?.themeParams?.button_color) {
             themeColorPrimary = tg.themeParams.button_color;
             // Apply native color injection to frame accent glow dynamically
             document.getElementById('badge-glow').style.background = `linear-gradient(to top right, ${themeColorPrimary}, #a855f7)`;
+        }
+
+        if (tg?.themeParams?.bg_color) {
+            themeColorBg = tg.themeParams.bg_color;
         }
 
         // --- HTML5 CANVAS MATRIX RUNTIME ---
@@ -379,7 +390,10 @@
         }
 
         function renderMatrixLoop() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // Dynamic theme background clearing
+            ctx.fillStyle = themeColorBg;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
             particles.forEach(p => {
                 p.update();
                 p.draw();
@@ -510,7 +524,7 @@
                 if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             } catch (err) {
                 showNotification("Errore nella copia", "alert-circle");
-            } {
+            } finally {
                 document.body.removeChild(textarea);
             }
         }
