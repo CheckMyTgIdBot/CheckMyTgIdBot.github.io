@@ -5,9 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>My Profile Dashboard</title>
+    <!-- Tailwind CSS for utility styling -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Official Telegram Web App SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- QRCode library for native offline connection handling -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     
     <style>
@@ -81,11 +85,15 @@
 </head>
 <body class="h-screen w-screen flex flex-col justify-between overflow-hidden relative">
 
+    <!-- Interactive Interactive Background Matrix via Canvas -->
     <canvas id="bg-matrix" class="absolute inset-0 w-full h-full z-0 pointer-events-none opacity-60"></canvas>
 
+    <!-- Main Dashboard Container with top padding optimized for "Chiudi" top app bar -->
     <div class="flex-1 flex flex-col justify-between px-5 pt-16 pb-6 z-10 select-none">
         
+        <!-- Header Profile Visuals (Static & Fully Optimized) -->
         <div class="flex flex-col items-center justify-center shrink-0">
+            <!-- Avatar Frame -->
             <div class="relative pointer-events-auto">
                 <div id="badge-glow" class="absolute -inset-1 bg-gradient-to-tr from-[var(--link-color)] to-purple-500 rounded-full blur-md opacity-25"></div>
                 <img 
@@ -94,10 +102,10 @@
                     alt="Profile" 
                     class="w-32 h-32 squircle-avatar object-cover border-2 border-white/10 shadow-2xl mx-auto"
                 />
-                <span id="rarity-badge" class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-amber-500 to-yellow-400 text-black text-[9px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full shadow-lg border border-black/10">LOAD...</span>
             </div>
 
-            <div class="text-center mt-5 space-y-1">
+            <!-- Profile Name & Pulsing Online Status -->
+            <div class="text-center mt-4 space-y-1">
                 <h1 id="full-name" class="text-2xl font-extrabold tracking-tight text-white leading-none">
                     null
                 </h1>
@@ -108,7 +116,9 @@
             </div>
         </div>
 
+        <!-- 3 Horizontal Action Buttons -->
         <div class="grid grid-cols-3 gap-3 shrink-0 my-5">
+            <!-- Action 1: Condividi -->
             <button onclick="shareMyDetails()" class="tg-btn-action rounded-2xl py-3 flex flex-col items-center justify-center text-center space-y-1 shadow-lg">
                 <div class="p-1.5 rounded-xl bg-sky-500/10 text-sky-400">
                     <i data-lucide="share-2" class="w-4.5 h-4.5"></i>
@@ -116,6 +126,7 @@
                 <span class="text-[11px] font-bold text-white/90">Condividi</span>
             </button>
             
+            <!-- Action 2: Digital Passport Export -->
             <button onclick="exportPassportCard()" class="tg-btn-action rounded-2xl py-3 flex flex-col items-center justify-center text-center space-y-1 shadow-lg">
                 <div class="p-1.5 rounded-xl bg-amber-500/10 text-amber-400">
                     <i data-lucide="id-card" class="w-4.5 h-4.5"></i>
@@ -123,6 +134,7 @@
                 <span class="text-[11px] font-bold text-white/90">Salva Card</span>
             </button>
 
+            <!-- Action 3: Session Details Panel -->
             <button onclick="openBottomSheet()" class="tg-btn-action rounded-2xl py-3 flex flex-col items-center justify-center text-center space-y-1 shadow-lg">
                 <div class="p-1.5 rounded-xl bg-indigo-500/10 text-indigo-400">
                     <i data-lucide="terminal" class="w-4.5 h-4.5"></i>
@@ -131,10 +143,12 @@
             </button>
         </div>
 
+        <!-- List Data Card (Fits screen view ports precisely with enhanced bottom spacing) -->
         <div class="flex-1 flex flex-col justify-center min-h-0">
             <div class="tg-secondary-bg/80 backdrop-blur-xl rounded-2xl divide-y divide-white/5 overflow-hidden shadow-2xl border border-white/5">
                 
-                <div class="px-5 py-[12px] flex items-center justify-between active:bg-white/5 transition-colors cursor-pointer" onclick="copyUserId()">
+                <!-- ID Cell (Triggers Copy and Shows Rarity Rank) -->
+                <div class="px-5 py-[14px] flex items-center justify-between active:bg-white/5 transition-colors cursor-pointer" onclick="copyUserId()">
                     <div class="flex items-center space-x-3.5 min-w-0">
                         <div class="text-sky-400 shrink-0">
                             <i data-lucide="smartphone" class="w-5 h-5"></i>
@@ -144,10 +158,11 @@
                             <p class="text-[10px] tg-hint mt-0.5 uppercase tracking-wider font-semibold">User ID</p>
                         </div>
                     </div>
-                    <span id="rarity-score-label" class="text-[10px] bg-white/5 text-white/70 px-2 py-0.5 rounded-md font-mono">-%</span>
+                    <span id="rarity-score-label" class="text-[10px] bg-sky-500/10 text-sky-400 px-2.5 py-0.5 rounded-md font-mono font-bold">-% Rarità</span>
                 </div>
 
-                <div class="px-5 py-[12px] flex items-center justify-between active:bg-white/5 transition-colors cursor-pointer" onclick="openQrGateway()">
+                <!-- Username Cell (Shows asset tier valuation context) -->
+                <div class="px-5 py-[14px] flex items-center justify-between active:bg-white/5 transition-colors cursor-pointer" onclick="openQrGateway()">
                     <div class="flex items-center space-x-3.5 min-w-0">
                         <div class="text-purple-400 shrink-0">
                             <i data-lucide="at-sign" class="w-5 h-5"></i>
@@ -157,10 +172,11 @@
                             <p class="text-[10px] tg-hint mt-0.5 uppercase tracking-wider font-semibold">Username & QR</p>
                         </div>
                     </div>
-                    <span id="username-valuation" class="text-[10px] bg-purple-500/10 text-purple-400 px-2 py-0.5 rounded-md font-bold">Standard</span>
+                    <span id="username-valuation" class="text-[10px] bg-purple-500/10 text-purple-400 px-2.5 py-0.5 rounded-md font-bold">null</span>
                 </div>
 
-                <div class="px-5 py-[12px] flex items-center space-x-3.5">
+                <!-- Bio Cell -->
+                <div class="px-5 py-[14px] flex items-center space-x-3.5">
                     <div class="text-amber-400 shrink-0">
                         <i data-lucide="quote" class="w-5 h-5"></i>
                     </div>
@@ -170,17 +186,22 @@
                     </div>
                 </div>
 
-                <div class="px-5 py-[12px] flex items-center space-x-3.5">
-                    <div class="text-emerald-400 shrink-0">
-                        <i data-lucide="calendar" class="w-5 h-5"></i>
+                <!-- Age / Creation Cell (With Integrated Creation Rank Title) -->
+                <div class="px-5 py-[14px] flex items-center justify-between">
+                    <div class="flex items-center space-x-3.5 min-w-0">
+                        <div class="text-emerald-400 shrink-0">
+                            <i data-lucide="calendar" class="w-5 h-5"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <p id="est-creation" class="text-sm font-semibold text-white truncate">null</p>
+                            <p class="text-[10px] tg-hint mt-0.5 uppercase tracking-wider font-semibold">Anno di Registrazione</p>
+                        </div>
                     </div>
-                    <div class="flex-1 min-w-0">
-                        <p id="est-creation" class="text-sm font-semibold text-white">null</p>
-                        <p class="text-[10px] tg-hint mt-0.5 uppercase tracking-wider font-semibold">Anno di Registrazione</p>
-                    </div>
+                    <span id="creation-rank-label" class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2.5 py-0.5 rounded-md font-bold">null</span>
                 </div>
 
-                <div class="px-5 py-[12px] flex items-center space-x-3.5">
+                <!-- Platform / Language Unified Cell -->
+                <div class="px-5 py-[14px] flex items-center space-x-3.5">
                     <div class="text-pink-400 shrink-0">
                         <i data-lucide="globe" class="w-5 h-5"></i>
                     </div>
@@ -199,11 +220,15 @@
 
     </div>
 
+    <!-- Cool Native Slide-up Bottom Sheet Modal -->
     <div id="bottom-sheet-backdrop" onclick="closeBottomSheet()" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden opacity-0 transition-opacity duration-300"></div>
     
+    <!-- Unified Dynamic Modal Sheet -->
     <div id="bottom-sheet" class="fixed bottom-0 left-0 right-0 max-h-[85vh] bg-slate-950/95 backdrop-blur-2xl border-t border-white/10 rounded-t-3xl p-6 z-50 transform translate-y-full flex flex-col space-y-4 shadow-2xl">
+        <!-- Drag Handle Indicator -->
         <div class="w-12 h-1.5 bg-white/20 rounded-full mx-auto shrink-0 mb-2 cursor-pointer" onclick="closeBottomSheet()"></div>
         
+        <!-- Dynamic Header Configuration -->
         <div class="flex items-center justify-between pb-3 border-b border-white/5">
             <div class="flex items-center space-x-2">
                 <i id="modal-icon" data-lucide="terminal" class="w-5 h-5 text-indigo-400"></i>
@@ -212,7 +237,9 @@
             <button onclick="closeBottomSheet()" class="text-xs font-bold text-white/50 active:text-white px-2 py-1 bg-white/5 rounded-lg">Close</button>
         </div>
 
+        <!-- Sheet Content Switch Container -->
         <div id="modal-body-content" class="flex-1 overflow-y-auto space-y-4 pr-1">
+            <!-- Diagnostic Elements Placeholder Container -->
             <div id="diagnostic-container" class="space-y-4">
                 <div class="space-y-1">
                     <span class="text-[10px] uppercase tracking-wider tg-hint font-bold">Authentication Date</span>
@@ -228,6 +255,7 @@
                 </div>
             </div>
 
+            <!-- Dynamic QR Container Layout Placeholder -->
             <div id="qr-container" class="hidden flex flex-col items-center justify-center text-center py-6 space-y-4">
                 <div id="qrcode-canvas" class="bg-white p-3 rounded-2xl shadow-xl inline-block"></div>
                 <p class="text-xs tg-hint max-w-xs font-medium">Scansiona questo codice per condividere istantaneamente il tuo contatto o visualizzare le informazioni sul bot.</p>
@@ -235,6 +263,7 @@
         </div>
     </div>
 
+    <!-- Native styled toast banner -->
     <div id="custom-toast" class="opacity-0 translate-y-4 fixed bottom-6 left-6 right-6 tg-secondary-bg border border-white/10 p-4 rounded-2xl shadow-2xl flex items-center space-x-3 transition-all duration-300 pointer-events-none z-50">
         <div class="p-1.5 bg-[var(--button-color)] rounded-xl text-white">
             <i id="toast-icon" data-lucide="check" class="w-4 h-4"></i>
@@ -242,10 +271,13 @@
         <span id="toast-message" class="text-xs font-bold">Copiato con successo!</span>
     </div>
 
+    <!-- Hidden Passport Export Engine Engine Canvas -->
     <canvas id="passport-canvas" class="hidden" width="600" height="360"></canvas>
 
+    <!-- Optimized spacing above the Telegram bottom MainButton safe-area -->
     <div class="h-6 shrink-0"></div>
 
+    <!-- Logic Engine & Canvas Background Animation -->
     <script>
         lucide.createIcons();
         const tg = window.Telegram ? window.Telegram.WebApp : null;
@@ -437,17 +469,17 @@
             const idNum = parseInt(uid, 10);
             if (isNaN(idNum)) return { age: 'null', rank: 'COMMON', percentile: '99%', badgeStyle: 'from-slate-600 to-slate-400 text-white' };
             
-            if (idNum < 50000000) return { age: '2008 - 2013', rank: 'ANCIENT MYTH', percentile: 'Top 0.1%', badgeStyle: 'from-red-600 to-amber-500 text-white' };
-            if (idNum < 150000000) return { age: '2014 - 2015', rank: 'LEGACY VINTAGE', percentile: 'Top 1.2%', badgeStyle: 'from-amber-500 to-yellow-400 text-black' };
-            if (idNum < 500000000) return { age: '2016 - 2017', rank: 'VETERAN COLLECTOR', percentile: 'Top 4.8%', badgeStyle: 'from-purple-600 to-indigo-400 text-white' };
-            if (idNum < 950000000) return { age: '2018 - 2019', rank: 'RARE SENIOR', percentile: 'Top 12%', badgeStyle: 'from-blue-600 to-sky-400 text-white' };
-            if (idNum < 1900000000) return { age: '2020 - 2021', rank: 'MID ERA', percentile: 'Top 35%', badgeStyle: 'from-teal-600 to-emerald-400 text-white' };
-            if (idNum < 7000000000) return { age: '2022 - 2024', rank: 'STANDARD', percentile: 'Top 78%', badgeStyle: 'from-slate-500 to-slate-400 text-white' };
-            return { age: '2025 - 2026', rank: 'NEW COMER', percentile: 'Top 95%', badgeStyle: 'from-stone-600 to-stone-400 text-white' };
+            if (idNum < 50000000) return { age: '2008 - 2013', rank: 'ANCIENT MYTH', percentile: '0.1%', badgeStyle: 'from-red-600 to-amber-500 text-white' };
+            if (idNum < 150000000) return { age: '2014 - 2015', rank: 'LEGACY VINTAGE', percentile: '1.2%', badgeStyle: 'from-amber-500 to-yellow-400 text-black' };
+            if (idNum < 500000000) return { age: '2016 - 2017', rank: 'VETERAN', percentile: '4.8%', badgeStyle: 'from-purple-600 to-indigo-400 text-white' };
+            if (idNum < 950000000) return { age: '2018 - 2019', rank: 'RARE SENIOR', percentile: '12%', badgeStyle: 'from-blue-600 to-sky-400 text-white' };
+            if (idNum < 1900000000) return { age: '2020 - 2021', rank: 'MID ERA', percentile: '35%', badgeStyle: 'from-teal-600 to-emerald-400 text-white' };
+            if (idNum < 7000000000) return { age: '2022 - 2024', rank: 'STANDARD', percentile: '78%', badgeStyle: 'from-slate-500 to-slate-400 text-white' };
+            return { age: '2025 - 2026', rank: 'NEW COMER', percentile: '95%', badgeStyle: 'from-stone-600 to-stone-400 text-white' };
         }
 
         function evaluateUsernameScarcity(uname) {
-            if (!uname || uname === 'null') return { label: 'Nessuno', styles: 'bg-white/5 text-white/40' };
+            if (!uname || uname === 'null') return { label: 'null', styles: 'bg-white/5 text-white/40' };
             const len = uname.length;
             if (len <= 4) return { label: 'Fragment Tier 💎', styles: 'bg-rose-500/20 text-rose-400' };
             if (len == 5) return { label: 'High Value ⭐', styles: 'bg-amber-500/20 text-amber-400' };
@@ -619,7 +651,7 @@
                 tg.ready();
 
                 if (tg.MainButton) {
-                    tg.MainButton.setText("CHIUDI CHECKER");
+                    tg.MainButton.setText("CLOSE CHECKER");
                     tg.MainButton.show();
                     tg.MainButton.onClick(() => {
                         if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
@@ -651,18 +683,14 @@
                     // Map Custom Algorithmic Badges metrics
                     const metaData = calculateAccountMetadata(user.id);
                     document.getElementById('est-creation').textContent = `${metaData.age} (Stima)`;
-                    
-                    const badge = document.getElementById('rarity-badge');
-                    badge.textContent = metaData.rank;
-                    badge.className = `absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-gradient-to-r ${metaData.badgeStyle} text-[9px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full shadow-lg border border-black/10`;
-                    
-                    document.getElementById('rarity-score-label').textContent = metaData.percentile;
+                    document.getElementById('rarity-score-label').textContent = `${metaData.percentile} Rarità`;
+                    document.getElementById('creation-rank-label').textContent = metaData.rank;
 
                     // Evaluate handle structural value valuation tiers
                     const uVal = evaluateUsernameScarcity(user.username);
                     const valLabel = document.getElementById('username-valuation');
                     valLabel.textContent = uVal.label;
-                    valLabel.className = `text-[10px] px-2 py-0.5 rounded-md font-bold ${uVal.styles}`;
+                    valLabel.className = `text-[10px] px-2.5 py-0.5 rounded-md font-bold ${uVal.styles}`;
 
                     if (tg.initDataUnsafe.auth_date) {
                         const dateVal = new Date(tg.initDataUnsafe.auth_date * 1000);
@@ -679,7 +707,7 @@
                         avatarImg.src = `https://api.dicebear.com/7.x/initials/svg?seed=${initials}&backgroundType=gradientLinear&backgroundRotation=45`;
                     }
                 } else {
-                    // Fallback default mock rendering config logic context
+                    // Fallback configuration displaying exactly "null" when loaded outside of Telegram
                     document.getElementById('full-name').textContent = 'null';
                     document.getElementById('username-display').textContent = 'null';
                     document.getElementById('cell-id').textContent = 'null';
@@ -687,7 +715,10 @@
                     document.getElementById('est-creation').textContent = 'null';
                     document.getElementById('user-lang').textContent = 'null';
                     document.getElementById('user-platform').textContent = 'null';
-                    document.getElementById('rarity-badge').textContent = 'STANDARD';
+                    document.getElementById('rarity-score-label').textContent = '-% Rarità';
+                    document.getElementById('creation-rank-label').textContent = 'null';
+                    document.getElementById('username-valuation').textContent = 'null';
+                    document.getElementById('username-valuation').className = 'text-[10px] px-2.5 py-0.5 rounded-md font-bold bg-white/5 text-white/40';
                     document.getElementById('user-avatar').src = 'https://api.dicebear.com/7.x/initials/svg?seed=null&backgroundType=gradientLinear&backgroundColor=b6bec9';
                 }
             }
