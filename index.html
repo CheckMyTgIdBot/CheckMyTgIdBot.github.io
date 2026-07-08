@@ -5,9 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>My Profile Dashboard</title>
+    <!-- Tailwind CSS for utility styling -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Official Telegram Web App SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- QRCode library for native offline connection handling -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     
     <style>
@@ -108,11 +112,15 @@
 </head>
 <body class="h-screen w-screen flex flex-col justify-between overflow-hidden relative">
 
+    <!-- Interactive Interactive Background Matrix via Canvas -->
     <canvas id="bg-matrix" class="absolute inset-0 w-full h-full z-0 pointer-events-none opacity-40"></canvas>
 
+    <!-- Main Dashboard Container with top padding optimized for "Chiudi" top app bar -->
     <div class="flex-1 flex flex-col justify-between px-5 pt-16 pb-6 z-10 select-none">
         
+        <!-- Header Profile Visuals (Static & Fully Optimized) -->
         <div class="flex flex-col items-center justify-center shrink-0">
+            <!-- Avatar Frame -->
             <div class="relative pointer-events-auto">
                 <div id="badge-glow" class="absolute -inset-1 rounded-full blur-md opacity-0"></div>
                 <img 
@@ -123,6 +131,7 @@
                 />
             </div>
 
+            <!-- Profile Name & Pulsing Online Status -->
             <div class="text-center mt-4 space-y-1">
                 <h1 id="full-name" class="text-2xl font-extrabold tracking-tight leading-none">
                     null
@@ -134,7 +143,9 @@
             </div>
         </div>
 
+        <!-- 3 Horizontal Action Buttons (Clean bg-less design) -->
         <div class="grid grid-cols-3 gap-3 shrink-0 my-5">
+            <!-- Action 1: Condividi -->
             <button onclick="shareMyDetails()" class="tg-btn-action rounded-2xl py-3.5 flex flex-col items-center justify-center text-center space-y-1.5 shadow-sm">
                 <div class="text-sky-400">
                     <i data-lucide="share-2" class="w-5 h-5"></i>
@@ -142,6 +153,7 @@
                 <span class="text-[11px] font-bold opacity-90">Condividi</span>
             </button>
             
+            <!-- Action 2: Digital Passport Export -->
             <button onclick="exportPassportCard()" class="tg-btn-action rounded-2xl py-3.5 flex flex-col items-center justify-center text-center space-y-1.5 shadow-sm">
                 <div class="text-amber-400">
                     <i data-lucide="id-card" class="w-5 h-5"></i>
@@ -149,6 +161,7 @@
                 <span class="text-[11px] font-bold opacity-90">Salva Card</span>
             </button>
 
+            <!-- Action 3: Session Details Panel -->
             <button onclick="openBottomSheet()" class="tg-btn-action rounded-2xl py-3.5 flex flex-col items-center justify-center text-center space-y-1.5 shadow-sm">
                 <div class="text-indigo-400">
                     <i data-lucide="terminal" class="w-5 h-5"></i>
@@ -157,10 +170,12 @@
             </button>
         </div>
 
+        <!-- List Data Card (Fits screen view ports precisely with enhanced bottom spacing) -->
         <div class="flex-1 flex flex-col justify-center min-h-0">
             <div class="tg-secondary-bg rounded-3xl divide-y divide-black/5 dark:divide-white/5 overflow-hidden shadow-sm border border-black/5 dark:border-white/5">
                 
-                <div class="px-5 py-[11px] flex items-center justify-between active:bg-black/5 dark:active:bg-white/5 transition-colors cursor-pointer" onclick="copyUserId()">
+                <!-- ID Cell (Triggers Copy, Shows Rarity Rank and inline Copy Button) -->
+                <div class="px-5 py-[14px] flex items-center justify-between active:bg-black/5 dark:active:bg-white/5 transition-colors cursor-pointer" onclick="copyUserId()">
                     <div class="flex items-center space-x-3.5 min-w-0">
                         <div class="text-sky-400 shrink-0">
                             <i data-lucide="smartphone" class="w-5 h-5"></i>
@@ -178,7 +193,8 @@
                     </div>
                 </div>
 
-                <div class="px-5 py-[11px] flex items-center justify-between active:bg-black/5 dark:active:bg-white/5 transition-colors cursor-pointer" onclick="openQrGateway()">
+                <!-- Username Cell (Shows asset tier valuation context) -->
+                <div class="px-5 py-[14px] flex items-center justify-between active:bg-black/5 dark:active:bg-white/5 transition-colors cursor-pointer" onclick="openQrGateway()">
                     <div class="flex items-center space-x-3.5 min-w-0">
                         <div class="text-purple-400 shrink-0">
                             <i data-lucide="at-sign" class="w-5 h-5"></i>
@@ -191,7 +207,8 @@
                     <span id="username-valuation" class="text-[10px] bg-purple-500/10 text-purple-400 px-2.5 py-0.5 rounded-md font-bold">null</span>
                 </div>
 
-                <div class="px-5 py-[11px] flex items-center space-x-3.5">
+                <!-- Bio Cell -->
+                <div class="px-5 py-[14px] flex items-center space-x-3.5">
                     <div class="text-amber-400 shrink-0">
                         <i data-lucide="quote" class="w-5 h-5"></i>
                     </div>
@@ -201,7 +218,8 @@
                     </div>
                 </div>
 
-                <div class="px-5 py-[11px] flex items-center justify-between">
+                <!-- Age / Creation Cell (With Integrated Creation Rank Title) -->
+                <div class="px-5 py-[14px] flex items-center justify-between">
                     <div class="flex items-center space-x-3.5 min-w-0">
                         <div class="text-emerald-400 shrink-0">
                             <i data-lucide="calendar" class="w-5 h-5"></i>
@@ -214,7 +232,8 @@
                     <span id="creation-rank-label" class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2.5 py-0.5 rounded-md font-bold">null</span>
                 </div>
 
-                <div class="px-5 py-[11px] flex items-center space-x-3.5">
+                <!-- Platform / Language Unified Cell -->
+                <div class="px-5 py-[14px] flex items-center space-x-3.5">
                     <div class="text-pink-400 shrink-0">
                         <i data-lucide="globe" class="w-5 h-5"></i>
                     </div>
@@ -228,7 +247,8 @@
                     </div>
                 </div>
 
-                <div class="px-5 py-[11px] flex items-center justify-between">
+                <!-- Visitors Counter Cell (Shows Site Visitors globally) -->
+                <div class="px-5 py-[14px] flex items-center justify-between">
                     <div class="flex items-center space-x-3.5 min-w-0">
                         <div class="text-rose-400 shrink-0">
                             <i data-lucide="eye" class="w-5 h-5"></i>
@@ -246,11 +266,15 @@
 
     </div>
 
+    <!-- Cool Native Slide-up Bottom Sheet Modal (Synced with Telegram dynamic system colors) -->
     <div id="bottom-sheet-backdrop" onclick="closeBottomSheet()" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden opacity-0 transition-opacity duration-300"></div>
     
+    <!-- Unified Dynamic Modal Sheet -->
     <div id="bottom-sheet" class="fixed bottom-0 left-0 right-0 max-h-[85vh] tg-secondary-bg border-t tg-border-accent rounded-t-3xl p-6 z-50 transform translate-y-full flex flex-col space-y-4 shadow-2xl">
+        <!-- Drag Handle Indicator -->
         <div class="w-12 h-1.5 opacity-30 rounded-full mx-auto shrink-0 mb-2 cursor-pointer" style="background-color: var(--text-color);" onclick="closeBottomSheet()"></div>
         
+        <!-- Dynamic Header Configuration -->
         <div class="flex items-center justify-between pb-3 border-b tg-border-accent">
             <div class="flex items-center space-x-2">
                 <i id="modal-icon" data-lucide="terminal" class="w-5 h-5 text-indigo-400"></i>
@@ -259,7 +283,9 @@
             <button onclick="closeBottomSheet()" class="text-xs font-bold active:opacity-60 px-2.5 py-1.5 rounded-lg border tg-border-accent" style="color: var(--text-color); background-color: var(--bg-color);">Chiudi</button>
         </div>
 
+        <!-- Sheet Content Switch Container -->
         <div id="modal-body-content" class="flex-1 overflow-y-auto space-y-4 pr-1">
+            <!-- Diagnostic Elements Placeholder Container -->
             <div id="diagnostic-container" class="space-y-4">
                 <div class="space-y-1">
                     <span class="text-[10px] uppercase tracking-wider tg-hint font-bold">Authentication Date</span>
@@ -275,6 +301,7 @@
                 </div>
             </div>
 
+            <!-- Dynamic QR Container Layout Placeholder -->
             <div id="qr-container" class="hidden flex flex-col items-center justify-center text-center py-6 space-y-4">
                 <div id="qrcode-canvas" class="bg-white p-3 rounded-2xl shadow-xl inline-block"></div>
                 <p class="text-xs tg-hint max-w-xs font-semibold">Scansiona questo codice per condividere istantaneamente il tuo contatto o visualizzare le informazioni sul bot.</p>
@@ -282,18 +309,20 @@
         </div>
     </div>
 
+    <!-- Dedicated Interactive Passport Exporter Overlay Card (Fully matches Telegram system themes) -->
     <div id="passport-modal-overlay" class="fixed inset-0 bg-black/75 backdrop-blur-md z-[100] hidden flex-col items-center justify-center p-6 transition-all duration-300">
         <div class="w-full max-w-sm tg-secondary-bg border tg-border-accent p-6 rounded-3xl flex flex-col space-y-4 text-center shadow-2xl relative z-50">
             <h3 class="text-sm font-bold uppercase tracking-wider text-amber-500 flex items-center justify-center gap-2">
                 <i data-lucide="sparkles" class="w-4 h-4"></i> ID Passport Generato
             </h3>
             
+            <!-- Target visual image display (Long-press to save directly) -->
             <div class="relative overflow-hidden rounded-2xl border tg-border-accent p-2" style="background-color: var(--bg-color);">
                 <img id="exported-passport-img" class="w-full h-auto rounded-xl object-contain pointer-events-auto cursor-pointer" alt="Tieni premuto per salvare" />
             </div>
             
             <p class="text-xs leading-relaxed font-semibold tg-hint px-2">
-                👉 <span class="font-bold" style="color: var(--text-color);">Tieni premuto sull'immagine</span> sopra per salvarela o condividerla direttamente tramite il menu nativo del tuo telefono.
+                👉 <span class="font-bold" style="color: var(--text-color);">Tieni premuto sull'immagine</span> sopra per salvarla o condividerla direttamente tramite il menu nativo del tuo telefono.
             </p>
 
             <div class="flex space-x-3 pt-2">
@@ -305,6 +334,7 @@
         </div>
     </div>
 
+    <!-- Native styled toast banner -->
     <div id="custom-toast" class="opacity-0 translate-y-4 fixed bottom-6 left-6 right-6 tg-secondary-bg border tg-border-accent p-4 rounded-2xl shadow-2xl flex items-center space-x-3 transition-all duration-300 pointer-events-none z-50">
         <div class="p-1.5 bg-[var(--button-color)] rounded-xl text-[var(--button-text-color)]">
             <i id="toast-icon" data-lucide="check" class="w-4 h-4"></i>
@@ -312,10 +342,13 @@
         <span id="toast-message" class="text-xs font-bold" style="color: var(--text-color);">Copiato con successo!</span>
     </div>
 
+    <!-- Hidden Passport Export Engine Engine Canvas -->
     <canvas id="passport-canvas" class="hidden" width="600" height="360"></canvas>
 
+    <!-- Optimized spacing above the Telegram bottom MainButton safe-area -->
     <div class="h-6 shrink-0"></div>
 
+    <!-- Logic Engine & Canvas Background Animation -->
     <script>
         lucide.createIcons();
         const tg = window.Telegram ? window.Telegram.WebApp : null;
@@ -421,6 +454,7 @@
         }
 
         function renderMatrixLoop() {
+            // Dynamic theme background clearing
             ctx.fillStyle = themeColorBg;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
@@ -512,24 +546,27 @@
         function initializeVisitorCounter() {
             const countLabel = document.getElementById('visitor-count');
             
-            // Appended with your authorized authorization token
+            // Increment query utilizing your direct private token
             const apiEndpoint = "https://api.counterapi.dev/v1/telegram_id_checker/global_site_visits/increment?token=ut_OdGN67CH0eUmC6EI0QL4ekgydAAxser3n3yEv4Nr";
 
             fetch(apiEndpoint)
                 .then(response => {
-                    if (!response.ok) throw new Error('Downtime');
+                    if (!response.ok) throw new Error('API down');
                     return response.json();
                 })
                 .then(data => {
-                    if (data && typeof data.count !== 'undefined') {
+                    // Correct mapping: Reading the exact 'value' attribute from counterapi.dev response
+                    if (data && typeof data.value !== 'undefined') {
+                        countLabel.textContent = Number(data.value).toLocaleString();
+                    } else if (data && typeof data.count !== 'undefined') {
                         countLabel.textContent = Number(data.count).toLocaleString();
                     } else {
-                        countLabel.textContent = "0";
+                        countLabel.textContent = "1";
                     }
                 })
                 .catch(err => {
-                    // Safe visual zero fallthrough
-                    countLabel.textContent = "0";
+                    // Graceful fallback to prevent blank/broken labels if client blocks requests
+                    countLabel.textContent = "1";
                 });
         }
 
@@ -812,6 +849,7 @@
                         avatarImg.src = `https://api.dicebear.com/7.x/initials/svg?seed=${initials}&backgroundType=gradientLinear&backgroundRotation=45`;
                     }
                 } else {
+                    // Fallback configuration displaying exactly "null" when loaded outside of Telegram
                     document.getElementById('full-name').textContent = 'null';
                     document.getElementById('username-display').textContent = 'null';
                     document.getElementById('cell-id').textContent = 'null';
